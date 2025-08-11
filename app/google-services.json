@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1056507434333",
+    "project_id": "hrms-a5b37",
+    "storage_bucket": "hrms-a5b37.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1056507434333:android:bbe0965bdb3f71f0c144b4",
+        "android_client_info": {
+          "package_name": "com.skye.hrms"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClQSHMVyARqT3IRCu4zAns54cHJ993n5U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
