@@ -9,6 +9,7 @@ import com.skye.hrms.data.viewmodels.AuthViewModel
 import com.skye.hrms.ui.helpers.Navigation
 import com.skye.hrms.ui.themes.HRMSTheme
 
+
 class MainActivity :
     ComponentActivity() {
 

@@ -97,7 +97,7 @@ dependencies {
     implementation("androidx.media3:media3-exoplayer:1.3.1")
     implementation("androidx.media3:media3-ui:1.3.1")
 
-
+    // Firebase: BOM
     implementation(platform("com.google.firebase:firebase-bom:33.2.0"))
 
     // Kotlin Coroutines

@@ -9,6 +9,7 @@ import com.skye.hrms.data.viewmodels.AuthViewModel
 import com.skye.hrms.ui.screens.BoardingScreen
 import com.skye.hrms.ui.screens.HomeScreen
 import com.skye.hrms.ui.screens.LoginScreen
+import com.skye.hrms.ui.screens.OnBoardingScreen
 import com.skye.hrms.ui.screens.SignupScreen
 import com.skye.hrms.ui.screens.SplashScreen
 
@@ -16,7 +17,6 @@ import com.skye.hrms.ui.screens.SplashScreen
 fun Navigation(
     authViewModel: AuthViewModel
 ) {
-
     val navController: NavHostController = rememberNavController()
 
     NavHost(
@@ -96,7 +96,7 @@ fun Navigation(
                     navController.navigate(Screens.LoginScreen.route)
                 },
                 onSignupSuccess = {
-                    navController.navigate(Screens.HomeScreen.route)
+                    navController.navigate(Screens.OnBoardingScreen.route)
                 },
                 authViewModel = authViewModel
             )
@@ -112,6 +112,21 @@ fun Navigation(
         ) {
             HomeScreen()
         }
+
+        composable(
+            route = Screens.OnBoardingScreen.route,
+            enterTransition = ScreenTransitions.fadeScaleEnter,
+            exitTransition = ScreenTransitions.fadeScaleExit,
+            popEnterTransition = ScreenTransitions.fadeScalePopEnter,
+            popExitTransition = ScreenTransitions.fadeScalePopExit
+        ) {
+            OnBoardingScreen(
+                onFormSubmitted = {
+                    navController.navigate(Screens.HomeScreen.route)
+                }
+            )
+        }
+
 
     }
 }
