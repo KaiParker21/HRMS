@@ -12,6 +12,7 @@ import com.skye.hrms.ui.screens.LoginScreen
 import com.skye.hrms.ui.screens.OnBoardingScreen
 import com.skye.hrms.ui.screens.SignupScreen
 import com.skye.hrms.ui.screens.SplashScreen
+import com.skye.hrms.ui.screens.VerificationScreen
 
 @Composable
 fun Navigation(
@@ -75,10 +76,18 @@ fun Navigation(
             LoginScreen(
                 authViewModel = authViewModel,
                 onNavigateToSignup = {
-                    navController.navigate(Screens.SignupScreen.route)
+                    navController.navigate(Screens.SignupScreen.route) {
+                        popUpTo(Screens.LoginScreen.route) {
+                            inclusive = true
+                        }
+                    }
                 },
                 onLoginSuccess = {
-                    navController.navigate(Screens.HomeScreen.route)
+                    navController.navigate(Screens.HomeScreen.route) {
+                        popUpTo(Screens.LoginScreen.route) {
+                            inclusive = true
+                        }
+                    }
                 }
             )
 
@@ -94,10 +103,18 @@ fun Navigation(
             SignupScreen(
                 authViewModel = authViewModel,
                 onNavigateToLogin = {
-                    navController.navigate(Screens.LoginScreen.route)
+                    navController.navigate(Screens.LoginScreen.route) {
+                        popUpTo(Screens.SignupScreen.route) {
+                            inclusive = true
+                        }
+                    }
                 },
                 onSignupSuccess = {
-                    navController.navigate(Screens.HomeScreen.route)
+                    navController.navigate(Screens.VerificationScreen.route) {
+                        popUpTo(Screens.SignupScreen.route) {
+                            inclusive = true
+                        }
+                    }
                 }
             )
 
@@ -122,11 +139,41 @@ fun Navigation(
         ) {
             OnBoardingScreen(
                 onFormSubmitted = {
-                    navController.navigate(Screens.HomeScreen.route)
+                    navController.navigate(Screens.HomeScreen.route) {
+                        popUpTo(Screens.OnBoardingScreen.route) {
+                            inclusive = true
+                        }
+                    }
                 }
             )
         }
 
+        composable(
+            route = Screens.VerificationScreen.route,
+            enterTransition = ScreenTransitions.fadeScaleEnter,
+            exitTransition = ScreenTransitions.fadeScaleExit,
+            popEnterTransition = ScreenTransitions.fadeScalePopEnter,
+            popExitTransition = ScreenTransitions.fadeScalePopExit
+        ) {
+            VerificationScreen(
+                authViewModel = authViewModel,
+                onVerified = {
+                    navController.navigate(Screens.OnBoardingScreen.route) {
+                        popUpTo(Screens.VerificationScreen.route) {
+                            inclusive = true
+                        }
+                    }
+                },
+                onBackToLogin = {
+                    navController.navigate(Screens.LoginScreen.route) {
+                        popUpTo(Screens.VerificationScreen.route) {
+                            inclusive = true
+                        }
+                    }
+                }
+            )
+
+        }
 
     }
 }

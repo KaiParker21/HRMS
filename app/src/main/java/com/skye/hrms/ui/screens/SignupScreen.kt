@@ -23,7 +23,6 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Lock
-import androidx.compose.material.icons.outlined.PersonOutline
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -38,7 +37,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.skye.hrms.data.viewmodels.AuthState
 import com.skye.hrms.data.viewmodels.AuthViewModel
@@ -53,11 +51,12 @@ fun SignupScreen(
     onSignupSuccess: () -> Unit,
 ) {
     val authState by authViewModel.authState.observeAsState()
-    val snackbarHostState = remember { SnackbarHostState() }
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
     val focusManager = LocalFocusManager.current
 
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
@@ -75,7 +74,7 @@ fun SignupScreen(
                 onSignupSuccess()
             }
             is AuthState.Error -> {
-                snackbarHostState.showSnackbar(message = state.message)
+                errorMessage = state.message
                 authViewModel.resetAuthState()
             }
             else -> Unit
@@ -83,10 +82,21 @@ fun SignupScreen(
     }
 
     val isLoading = authState is AuthState.Loading
+    val isError = errorMessage != null
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) }
-    ) { paddingValues ->
+    val handleSignUp = {
+        focusManager.clearFocus()
+        if (password != confirmPassword) {
+            errorMessage = "Passwords do not match."
+        } else {
+            authViewModel.signUpWithEmailAndPassword(
+                email = email.trim(),
+                password = password
+            )
+        }
+    }
+
+    Scaffold { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -173,8 +183,12 @@ fun SignupScreen(
 
                         OutlinedTextField(
                             value = email,
-                            onValueChange = { email = it },
+                            onValueChange = {
+                                email = it
+                                errorMessage = null
+                            },
                             enabled = !isLoading,
+                            isError = isError,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .onFocusEvent { event ->
@@ -201,8 +215,12 @@ fun SignupScreen(
 
                         OutlinedTextField(
                             value = password,
-                            onValueChange = { password = it },
+                            onValueChange = {
+                                password = it
+                                errorMessage = null
+                            },
                             enabled = !isLoading,
+                            isError = isError,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .onFocusEvent { event ->
@@ -229,30 +247,58 @@ fun SignupScreen(
                             shape = RoundedCornerShape(16.dp),
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Password,
-                                imeAction = ImeAction.Done
-                            ),
-                            keyboardActions = KeyboardActions(
-                                onDone = {
-                                    focusManager.clearFocus()
-                                    authViewModel.signUpWithEmailAndPassword(
-                                        email = email.trim(),
-                                        password = password
-                                    )
-                                }
+                                imeAction = ImeAction.Next
                             ),
                             singleLine = true
                         )
 
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        OutlinedTextField(
+                            value = confirmPassword,
+                            onValueChange = {
+                                confirmPassword = it
+                                errorMessage = null
+                            },
+                            enabled = !isLoading,
+                            isError = isError,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .onFocusEvent { event ->
+                                    if (event.isFocused) {
+                                        coroutineScope.launch { bringIntoViewRequester.bringIntoView() }
+                                    }
+                                },
+                            label = { Text("Confirm Password") },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Outlined.Lock,
+                                    contentDescription = "Confirm Password Icon"
+                                )
+                            },
+                            visualTransformation = PasswordVisualTransformation(),
+                            shape = RoundedCornerShape(16.dp),
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Password,
+                                imeAction = ImeAction.Done
+                            ),
+                            keyboardActions = KeyboardActions(onDone = { handleSignUp() }),
+                            singleLine = true
+                        )
+
+                        AnimatedVisibility(visible = isError) {
+                            Text(
+                                text = errorMessage ?: "",
+                                color = MaterialTheme.colorScheme.error,
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.padding(top = 8.dp)
+                            )
+                        }
+
                         Spacer(modifier = Modifier.height(24.dp))
 
                         Button(
-                            onClick = {
-                                authViewModel.signUpWithEmailAndPassword(
-                                    email = email.trim(),
-                                    password = password
-                                )
-                                focusManager.clearFocus()
-                            },
+                            onClick = { handleSignUp() },
                             enabled = !isLoading,
                             modifier = Modifier
                                 .fillMaxWidth()

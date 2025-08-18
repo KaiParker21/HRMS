@@ -1,14 +1,15 @@
 package com.skye.hrms.data.viewmodels
 
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
-import com.google.firebase.firestore.firestore
+import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import java.util.UUID
 
 sealed class SubmissionState {
     object Idle : SubmissionState()
@@ -18,7 +19,7 @@ sealed class SubmissionState {
 }
 
 data class EducationItem(
-    val id: Int = System.identityHashCode(Any()),
+    val id: String = UUID.randomUUID().toString(),
     val degree: String = "",
     val university: String = "",
     val year: String = "",
@@ -44,6 +45,9 @@ data class OnboardingFormData(
 
 class OnboardingViewModel: ViewModel() {
 
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
+
     private val _submissionState = MutableStateFlow<SubmissionState>(SubmissionState.Idle)
     val submissionState = _submissionState.asStateFlow()
 
@@ -55,27 +59,22 @@ class OnboardingViewModel: ViewModel() {
 
     fun submitForm() {
         _submissionState.value = SubmissionState.Loading
-        val userID = Firebase.auth.currentUser?.uid
+        val userID = auth.currentUser?.uid
 
         if (userID == null) {
             _submissionState.value = SubmissionState.Error("User is not logged in")
             return
         }
 
-        val finalFormData = _formData.value
-
-        val db = Firebase.firestore
-        val employeeDocument = db.collection("employees").document(userID)
-
-        employeeDocument.set(finalFormData)
-            .addOnSuccessListener {
+        viewModelScope.launch {
+            try {
+                db.collection("employees").document(userID).set(_formData.value).await()
                 _submissionState.value = SubmissionState.Success
-                println("SUCCESS: Onboarding data saved to Firestore.")
+            } catch (e: Exception) {
+                val errorMessage = e.message ?: "An unknown error occurred."
+                _submissionState.value = SubmissionState.Error(errorMessage)
             }
-            .addOnFailureListener { e ->
-                _submissionState.value = SubmissionState.Error(e.message ?: "An unknown error occurred.")
-                println("ERROR: Failed to save data. Reason: ${e.message}")
-            }
+        }
     }
 
     fun onNextStep() {
@@ -90,6 +89,10 @@ class OnboardingViewModel: ViewModel() {
         }
     }
 
+    fun resetSubmissionState() {
+        _submissionState.value = SubmissionState.Idle
+    }
+
     fun updateFullName(name: String) = _formData.update { it.copy(fullName = name) }
     fun updateDateOfBirth(date: String) = _formData.update { it.copy(dateOfBirth = date) }
     fun updateGender(gender: String) = _formData.update { it.copy(gender = gender) }
@@ -102,7 +105,6 @@ class OnboardingViewModel: ViewModel() {
             it.copy(
                 isPermanentAddressSameAsCurrent = isSame,
                 permanentAddress = newPermanentAddress
-
             )
         }
     }
@@ -138,7 +140,4 @@ class OnboardingViewModel: ViewModel() {
 
     fun updateEmergencyContactName(name: String) = _formData.update { it.copy(emergencyContactName = name) }
     fun updateEmergencyContactNumber(number: String) = _formData.update { it.copy(emergencyContactNumber = number) }
-
-
-
 }

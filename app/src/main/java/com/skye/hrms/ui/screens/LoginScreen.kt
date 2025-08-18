@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.PersonOutline
 import androidx.compose.material3.*
@@ -53,11 +54,11 @@ fun LoginScreen(
     onLoginSuccess: () -> Unit,
 ) {
     val authState by authViewModel.authState.observeAsState()
-    val snackbarHostState = remember { SnackbarHostState() }
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
     val focusManager = LocalFocusManager.current
 
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
@@ -75,7 +76,7 @@ fun LoginScreen(
                 onLoginSuccess()
             }
             is AuthState.Error -> {
-                snackbarHostState.showSnackbar(message = state.message)
+                errorMessage = state.message
                 authViewModel.resetAuthState()
             }
             else -> Unit
@@ -83,10 +84,9 @@ fun LoginScreen(
     }
 
     val isLoading = authState is AuthState.Loading
+    val isError = errorMessage != null
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) }
-    ) { paddingValues ->
+    Scaffold { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -172,8 +172,12 @@ fun LoginScreen(
                     ) {
                         OutlinedTextField(
                             value = email,
-                            onValueChange = { email = it },
+                            onValueChange = {
+                                email = it
+                                errorMessage = null
+                            },
                             enabled = !isLoading,
+                            isError = isError,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .onFocusEvent { event ->
@@ -183,15 +187,16 @@ fun LoginScreen(
                                         }
                                     }
                                 },
-                            label = { Text("Username") },
+                            label = { Text("Email") },
                             leadingIcon = {
                                 Icon(
-                                    imageVector = Icons.Outlined.PersonOutline,
-                                    contentDescription = "Username Icon"
+                                    imageVector = Icons.Outlined.Email,
+                                    contentDescription = "Email Icon"
                                 )
                             },
                             shape = RoundedCornerShape(16.dp),
                             keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Email,
                                 imeAction = ImeAction.Next
                             ),
                             singleLine = true
@@ -201,8 +206,12 @@ fun LoginScreen(
 
                         OutlinedTextField(
                             value = password,
-                            onValueChange = { password = it },
+                            onValueChange = {
+                                password = it
+                                errorMessage = null
+                            },
                             enabled = !isLoading,
+                            isError = isError,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .onFocusEvent { event ->
@@ -244,6 +253,15 @@ fun LoginScreen(
                             ),
                             singleLine = true
                         )
+
+                        AnimatedVisibility(visible = isError) {
+                            Text(
+                                text = errorMessage ?: "",
+                                color = MaterialTheme.colorScheme.error,
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.padding(top = 8.dp)
+                            )
+                        }
 
                         Spacer(modifier = Modifier.height(24.dp))
 
