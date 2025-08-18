@@ -73,13 +73,13 @@ fun Navigation(
             popExitTransition = ScreenTransitions.fadeScalePopExit
         ) {
             LoginScreen(
-                onGoToSignup = {
+                authViewModel = authViewModel,
+                onNavigateToSignup = {
                     navController.navigate(Screens.SignupScreen.route)
                 },
                 onLoginSuccess = {
                     navController.navigate(Screens.HomeScreen.route)
-                },
-                authViewModel = authViewModel
+                }
             )
 
         }
@@ -92,13 +92,13 @@ fun Navigation(
             popExitTransition = ScreenTransitions.fadeScalePopExit
         ) {
             SignupScreen(
-                onGoToLogin = {
+                authViewModel = authViewModel,
+                onNavigateToLogin = {
                     navController.navigate(Screens.LoginScreen.route)
                 },
                 onSignupSuccess = {
-                    navController.navigate(Screens.OnBoardingScreen.route)
-                },
-                authViewModel = authViewModel
+                    navController.navigate(Screens.HomeScreen.route)
+                }
             )
 
         }
