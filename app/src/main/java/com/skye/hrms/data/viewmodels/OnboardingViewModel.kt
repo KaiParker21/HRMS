@@ -27,6 +27,7 @@ data class EducationItem(
 )
 
 data class OnboardingFormData(
+    val role: String = "EMPLOYEE",
     val fullName: String = "",
     val dateOfBirth: String = "",
     val gender: String = "",

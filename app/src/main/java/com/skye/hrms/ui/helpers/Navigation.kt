@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.skye.hrms.data.viewmodels.AuthViewModel
 import com.skye.hrms.ui.screens.BoardingScreen
+import com.skye.hrms.ui.screens.DashboardScreen
 import com.skye.hrms.ui.screens.HomeScreen
 import com.skye.hrms.ui.screens.LoginScreen
 import com.skye.hrms.ui.screens.OnBoardingScreen
@@ -22,7 +23,7 @@ fun Navigation(
 
     NavHost(
         navController = navController,
-        startDestination = Screens.LoginScreen.route
+        startDestination = Screens.SplashScreen.route
     ) {
         composable(
             route = Screens.SplashScreen.route,
@@ -32,12 +33,8 @@ fun Navigation(
             popExitTransition = ScreenTransitions.fadeScalePopExit
         ) {
             SplashScreen(
-                onNavigateToBoarding = {
-                    navController.navigate(Screens.SplashScreen.route)
-                },
-                onNavigateToLogin = {
-
-                }
+                navController = navController,
+                authViewModel = authViewModel
             )
         }
 
@@ -83,7 +80,7 @@ fun Navigation(
                     }
                 },
                 onLoginSuccess = {
-                    navController.navigate(Screens.HomeScreen.route) {
+                    navController.navigate(Screens.SplashScreen.route) {
                         popUpTo(Screens.LoginScreen.route) {
                             inclusive = true
                         }
@@ -110,7 +107,7 @@ fun Navigation(
                     }
                 },
                 onSignupSuccess = {
-                    navController.navigate(Screens.VerificationScreen.route) {
+                    navController.navigate(Screens.SplashScreen.route) {
                         popUpTo(Screens.SignupScreen.route) {
                             inclusive = true
                         }
@@ -139,7 +136,7 @@ fun Navigation(
         ) {
             OnBoardingScreen(
                 onFormSubmitted = {
-                    navController.navigate(Screens.HomeScreen.route) {
+                    navController.navigate(Screens.DashboardScreen.route) {
                         popUpTo(Screens.OnBoardingScreen.route) {
                             inclusive = true
                         }
@@ -172,8 +169,25 @@ fun Navigation(
                     }
                 }
             )
-
         }
 
+        composable(
+            route = Screens.DashboardScreen.route,
+            enterTransition = ScreenTransitions.fadeScaleEnter,
+            exitTransition = ScreenTransitions.fadeScaleExit,
+            popEnterTransition = ScreenTransitions.fadeScalePopEnter,
+            popExitTransition = ScreenTransitions.fadeScalePopExit
+        ) {
+            DashboardScreen(
+                authViewModel = authViewModel,
+                onSignOut = {
+                    navController.navigate(Screens.LoginScreen.route) {
+                        popUpTo(Screens.DashboardScreen.route) {
+                            inclusive = true
+                        }
+                    }
+                }
+            )
+        }
     }
 }
