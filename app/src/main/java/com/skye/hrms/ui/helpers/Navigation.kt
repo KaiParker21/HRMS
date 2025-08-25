@@ -1,5 +1,7 @@
 package com.skye.hrms.ui.helpers
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -15,6 +17,7 @@ import com.skye.hrms.ui.screens.SignupScreen
 import com.skye.hrms.ui.screens.SplashScreen
 import com.skye.hrms.ui.screens.VerificationScreen
 
+@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun Navigation(
     authViewModel: AuthViewModel

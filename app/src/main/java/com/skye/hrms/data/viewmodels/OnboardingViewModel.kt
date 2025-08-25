@@ -2,6 +2,7 @@ package com.skye.hrms.data.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Timestamp // <-- Import Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,6 +43,17 @@ data class OnboardingFormData(
     val educationalHistory: List<EducationItem> = listOf(EducationItem()),
     val emergencyContactName: String = "",
     val emergencyContactNumber: String = "",
+
+    // --- CHANGES START HERE ---
+    // Added fields to ensure every new user document has the required data for the dashboard.
+
+    val isClockedIn: Boolean = false,
+    val lastClockInTime: Timestamp? = null,
+    val leaveBalances: List<Map<String, Any>> = listOf(
+        mapOf("type" to "Casual", "balance" to 12.0, "total" to 12.0),
+        mapOf("type" to "Sick", "balance" to 6.0, "total" to 6.0)
+    )
+    // --- CHANGES END HERE ---
 )
 
 class OnboardingViewModel: ViewModel() {
@@ -69,6 +81,7 @@ class OnboardingViewModel: ViewModel() {
 
         viewModelScope.launch {
             try {
+                // No changes needed here. It automatically saves the entire updated formData object.
                 db.collection("employees").document(userID).set(_formData.value).await()
                 _submissionState.value = SubmissionState.Success
             } catch (e: Exception) {
