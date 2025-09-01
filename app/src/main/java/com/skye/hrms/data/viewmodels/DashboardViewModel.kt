@@ -16,7 +16,6 @@ import java.time.Instant
 import java.time.LocalTime
 import java.time.ZoneId
 
-// Data classes remain the same
 data class LeaveInfo(val type: String, val balance: Float, val total: Float)
 data class TeamMember(val name: String, val avatarUrl: String)
 

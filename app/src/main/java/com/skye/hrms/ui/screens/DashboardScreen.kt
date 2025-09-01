@@ -1,45 +1,61 @@
 package com.skye.hrms.ui.screens
 
-import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Login
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.automirrored.outlined.Article
 import androidx.compose.material.icons.automirrored.outlined.EventNote
-import androidx.compose.material.icons.filled.Login
-import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.CoPresent
 import androidx.compose.material.icons.outlined.Payments
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DividerDefaults
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.skye.hrms.data.viewmodels.AuthViewModel
-import com.skye.hrms.data.viewmodels.DashboardUiState
 import com.skye.hrms.data.viewmodels.DashboardViewModel
 import com.skye.hrms.data.viewmodels.LeaveInfo
-import com.skye.hrms.ui.themes.HRMSTheme
 import kotlinx.coroutines.delay
 import java.time.Duration
 import java.time.LocalTime
@@ -103,8 +119,6 @@ fun GreetingHeader(name: String) {
     }
 }
 
-
-// 2. An interactive attendance card ⏰
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun AttendanceCard(
@@ -160,7 +174,7 @@ fun AttendanceCard(
             }
             FilledTonalButton(onClick = onClockInToggle) {
                 Icon(
-                    imageVector = if (isClockedIn) Icons.AutoMirrored.Filled.Logout else Icons.Filled.Login,
+                    imageVector = if (isClockedIn) Icons.AutoMirrored.Filled.Logout else Icons.AutoMirrored.Filled.Login,
                     contentDescription = "Clock In/Out",
                     modifier = Modifier.size(18.dp)
                 )
@@ -171,7 +185,6 @@ fun AttendanceCard(
     }
 }
 
-// 3. Horizontal scrolling quick actions 🚀
 @Composable
 fun QuickActionsSection() {
     Column {
@@ -211,7 +224,6 @@ fun ActionCard(title: String, icon: ImageVector, backgroundColor: Color) {
 }
 
 
-// 4. A combined Time Off / Holiday card 🌴
 @Composable
 fun TimeOffInfoSection(leaveBalances: List<LeaveInfo>, holidayName: String, holidayDate: String) {
     Card(
@@ -229,7 +241,11 @@ fun TimeOffInfoSection(leaveBalances: List<LeaveInfo>, holidayName: String, holi
                     LeaveBalanceIndicator(leave = leave)
                 }
             }
-            Divider(modifier = Modifier.padding(vertical = 16.dp))
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 16.dp),
+                thickness = DividerDefaults.Thickness,
+                color = DividerDefaults.color
+            )
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.Outlined.CalendarMonth,
@@ -266,7 +282,6 @@ fun LeaveBalanceIndicator(leave: LeaveInfo) {
     }
 }
 
-// 5. Announcements 📢
 @Composable
 fun AnnouncementsSection(announcements: List<String>) {
     if(announcements.isNotEmpty()) {
