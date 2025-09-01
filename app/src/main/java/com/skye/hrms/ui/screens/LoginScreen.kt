@@ -90,7 +90,7 @@ fun LoginScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .imePadding()
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(

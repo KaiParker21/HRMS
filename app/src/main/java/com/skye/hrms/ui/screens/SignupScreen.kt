@@ -100,7 +100,6 @@ fun SignupScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(

@@ -185,7 +185,7 @@ fun Navigation(
             DashboardScreen(
                 authViewModel = authViewModel,
                 onSignOut = {
-                    navController.navigate(Screens.LoginScreen.route) {
+                    navController.navigate(Screens.SplashScreen.route) {
                         popUpTo(Screens.DashboardScreen.route) {
                             inclusive = true
                         }

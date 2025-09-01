@@ -17,6 +17,7 @@ sealed class AuthState {
     object Idle: AuthState()
     object Loading: AuthState()
     object Success: AuthState()
+    object Unauthenticated: AuthState() // <-- Add this state
     data class Error(val message: String): AuthState()
 }
 
@@ -102,6 +103,7 @@ class AuthViewModel: ViewModel() {
 
     fun signOut() {
         auth.signOut()
+        _authState.value = AuthState.Unauthenticated // <-- Add this line
     }
 
     fun resetAuthState() {

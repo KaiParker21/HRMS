@@ -13,10 +13,10 @@ import kotlinx.coroutines.tasks.await
 import java.util.UUID
 
 sealed class SubmissionState {
-    object Idle : LeaveSubmissionState()
-    object Loading : LeaveSubmissionState()
-    object Success : LeaveSubmissionState()
-    data class Error(val message: String) : LeaveSubmissionState()
+    object Idle : SubmissionState()
+    object Loading : SubmissionState()
+    object Success : SubmissionState()
+    data class Error(val message: String) : SubmissionState()
 }
 
 data class EducationItem(
@@ -61,7 +61,7 @@ class OnboardingViewModel: ViewModel() {
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
     private val db: FirebaseFirestore = FirebaseFirestore.getInstance()
 
-    private val _submissionState = MutableStateFlow<LeaveSubmissionState>(LeaveSubmissionState.Idle)
+    private val _submissionState = MutableStateFlow<SubmissionState>(SubmissionState.Idle)
     val submissionState = _submissionState.asStateFlow()
 
     private val _currentStep = MutableStateFlow(1)
@@ -71,22 +71,21 @@ class OnboardingViewModel: ViewModel() {
     val formData = _formData.asStateFlow()
 
     fun submitForm() {
-        _submissionState.value = LeaveSubmissionState.Loading
+        _submissionState.value = SubmissionState.Loading
         val userID = auth.currentUser?.uid
 
         if (userID == null) {
-            _submissionState.value = LeaveSubmissionState.Error("User is not logged in")
+            _submissionState.value = SubmissionState.Error("User is not logged in")
             return
         }
 
         viewModelScope.launch {
             try {
-                // No changes needed here. It automatically saves the entire updated formData object.
                 db.collection("employees").document(userID).set(_formData.value).await()
-                _submissionState.value = LeaveSubmissionState.Success
+                _submissionState.value = SubmissionState.Success
             } catch (e: Exception) {
                 val errorMessage = e.message ?: "An unknown error occurred."
-                _submissionState.value = LeaveSubmissionState.Error(errorMessage)
+                _submissionState.value = SubmissionState.Error(errorMessage)
             }
         }
     }
@@ -104,7 +103,7 @@ class OnboardingViewModel: ViewModel() {
     }
 
     fun resetSubmissionState() {
-        _submissionState.value = LeaveSubmissionState.Idle
+        _submissionState.value = SubmissionState.Idle
     }
 
     fun updateFullName(name: String) = _formData.update { it.copy(fullName = name) }

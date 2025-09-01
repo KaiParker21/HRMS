@@ -32,7 +32,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.skye.hrms.data.viewmodels.EducationItem
 import com.skye.hrms.data.viewmodels.OnboardingFormData
 import com.skye.hrms.data.viewmodels.OnboardingViewModel
-import com.skye.hrms.data.viewmodels.LeaveSubmissionState
+import com.skye.hrms.data.viewmodels.SubmissionState
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -79,8 +79,8 @@ fun OnBoardingScreen(
 
     LaunchedEffect(submissionState) {
         when (val state = submissionState) {
-            is LeaveSubmissionState.Success -> onFormSubmitted()
-            is LeaveSubmissionState.Error -> {
+            is SubmissionState.Success -> onFormSubmitted()
+            is SubmissionState.Error -> {
                 snackbarHostState.showSnackbar(state.message)
                 onboardingViewModel.resetSubmissionState()
             }
@@ -131,7 +131,7 @@ fun OnBoardingScreen(
                     onPrevious = onboardingViewModel::onPreviousStep,
                     onNext = handleNext,
                     onSubmit = handleSubmit,
-                    isLoading = submissionState is LeaveSubmissionState.Loading
+                    isLoading = submissionState is SubmissionState.Loading
                 )
             },
             containerColor = Color.Transparent
@@ -165,7 +165,7 @@ fun OnBoardingScreen(
             }
         }
 
-        if (submissionState is LeaveSubmissionState.Loading) {
+        if (submissionState is SubmissionState.Loading) {
             Box(
                 modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.5f)),
                 contentAlignment = Alignment.Center
