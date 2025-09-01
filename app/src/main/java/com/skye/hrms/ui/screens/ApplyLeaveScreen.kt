@@ -16,8 +16,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.skye.hrms.data.viewmodels.LeaveSubmissionState // <-- Import the new state class
 import com.skye.hrms.data.viewmodels.LeaveViewModel
-import com.skye.hrms.data.viewmodels.LeaveSubmissionState
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -35,13 +35,15 @@ fun ApplyLeaveScreen(
 
     val leaveTypes = listOf("Casual", "Sick", "Earned", "Unpaid")
     val context = LocalContext.current
-    val submissionState by leaveViewModel.submissionState.collectAsState()
+
+    val leaveSubmissionState by leaveViewModel.submissionState.collectAsState()
 
     val openStartDateDialog = remember { mutableStateOf(false) }
     val openEndDateDialog = remember { mutableStateOf(false) }
 
-    LaunchedEffect(submissionState) {
-        when (val state = submissionState) {
+    LaunchedEffect(leaveSubmissionState) {
+        // Use the new LeaveSubmissionState type here
+        when (val state = leaveSubmissionState) {
             is LeaveSubmissionState.Success -> {
                 Toast.makeText(context, "Leave request submitted successfully!", Toast.LENGTH_LONG).show()
                 leaveViewModel.resetSubmissionState()
@@ -75,7 +77,6 @@ fun ApplyLeaveScreen(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Date Range Selection
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 DateInputField(
                     label = "Start Date",
@@ -145,9 +146,11 @@ fun ApplyLeaveScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
-                enabled = submissionState !is LeaveSubmissionState.Loading
+                // Use the new LeaveSubmissionState type here
+                enabled = leaveSubmissionState !is LeaveSubmissionState.Loading
             ) {
-                if (submissionState is LeaveSubmissionState.Loading) {
+                // Use the new LeaveSubmissionState type here
+                if (leaveSubmissionState is LeaveSubmissionState.Loading) {
                     CircularProgressIndicator(modifier = Modifier.size(24.dp), color = MaterialTheme.colorScheme.onPrimary)
                 } else {
                     Text("Submit Request", fontWeight = FontWeight.Bold)
@@ -156,7 +159,6 @@ fun ApplyLeaveScreen(
         }
     }
 
-    // Date Picker Dialogs
     if (openStartDateDialog.value) {
         CustomDatePickerDialog(
             onDateSelected = { startDate = it },
@@ -171,21 +173,30 @@ fun ApplyLeaveScreen(
     }
 }
 
-// Helper composable for date fields
+// Helper composables (DateInputField, CustomDatePickerDialog) remain the same as the previous version.
+// ... (You can copy them from the previous response if needed)
 @Composable
 fun DateInputField(label: String, selectedDate: Date?, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    val dateFormatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    OutlinedTextField(
-        value = selectedDate?.let { dateFormatter.format(it) } ?: "",
-        onValueChange = {},
-        label = { Text(label) },
-        readOnly = true,
-        leadingIcon = { Icon(Icons.Default.DateRange, contentDescription = null) },
-        modifier = modifier.clickable { onClick() }
-    )
+    val dateFormatter = SimpleDateFormat("dd MMM, yyyy", Locale.getDefault())
+
+    Box(modifier = modifier.clickable { onClick() }) {
+        OutlinedTextField(
+            value = selectedDate?.let { dateFormatter.format(it) } ?: "",
+            onValueChange = {},
+            label = { Text(label) },
+            leadingIcon = { Icon(Icons.Default.DateRange, contentDescription = null) },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = false,
+            colors = OutlinedTextFieldDefaults.colors(
+                disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                disabledBorderColor = MaterialTheme.colorScheme.outline,
+                disabledLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        )
+    }
 }
 
-// Helper composable for the DatePickerDialog
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomDatePickerDialog(onDateSelected: (Date) -> Unit, onDismiss: () -> Unit) {
@@ -196,7 +207,9 @@ fun CustomDatePickerDialog(onDateSelected: (Date) -> Unit, onDismiss: () -> Unit
         confirmButton = {
             Button(onClick = {
                 selectedDateInMillis?.let {
-                    onDateSelected(Date(it))
+                    val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+                    calendar.timeInMillis = it
+                    onDateSelected(calendar.time)
                 }
                 onDismiss()
             }) {

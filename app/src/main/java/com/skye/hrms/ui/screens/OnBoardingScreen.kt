@@ -50,7 +50,6 @@ private fun validateStep(step: Int, formData: OnboardingFormData): Set<String> {
             if (!formData.isPermanentAddressSameAsCurrent && formData.permanentAddress.isBlank()) errors.add("permanentAddress")
         }
         3 -> {
-            // No mandatory fields in this step in the original code
         }
         4 -> {
             formData.educationalHistory.forEach {
