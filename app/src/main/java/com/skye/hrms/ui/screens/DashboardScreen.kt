@@ -35,6 +35,7 @@ import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -80,7 +81,13 @@ fun DashboardScreen(
             contentPadding = PaddingValues(bottom = 24.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            item { GreetingHeader(name = uiState.employeeName) }
+            item { GreetingHeader(
+                name = uiState.employeeName,
+                onSignOutClicked = {
+                    authViewModel.signOut()
+                    onSignOut()
+                }
+            ) }
             item { AttendanceCard(
                 isClockedIn = uiState.isClockedIn,
                 clockInTime = uiState.clockInTime,
@@ -98,7 +105,10 @@ fun DashboardScreen(
 }
 
 @Composable
-fun GreetingHeader(name: String) {
+fun GreetingHeader(
+    name: String,
+    onSignOutClicked: () -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -112,11 +122,27 @@ fun GreetingHeader(name: String) {
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            Text(
-                text = name,
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.Bold
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = name,
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                IconButton(
+                    onClick = onSignOutClicked
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.Logout,
+                        contentDescription = "Sign Out",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+            }
         }
     }
 }

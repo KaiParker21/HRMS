@@ -209,7 +209,13 @@ fun Navigation(
             popExitTransition = ScreenTransitions.fadeScalePopExit
         ) {
             ApplyLeaveScreen(
-                navController = navController
+                onBackClicked = {
+                    navController.navigate(Screens.DashboardScreen.route) {
+                        popUpTo(Screens.ApplyLeaveScreen.route) {
+                            inclusive = true
+                        }
+                    }
+                }
             )
         }
     }

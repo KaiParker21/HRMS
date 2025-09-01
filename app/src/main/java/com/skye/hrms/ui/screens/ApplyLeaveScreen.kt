@@ -2,29 +2,66 @@ package com.skye.hrms.ui.screens
 
 import android.widget.Toast
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import com.skye.hrms.data.viewmodels.LeaveSubmissionState // <-- Import the new state class
+import com.skye.hrms.data.viewmodels.LeaveSubmissionState
 import com.skye.hrms.data.viewmodels.LeaveViewModel
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ApplyLeaveScreen(
-    navController: NavController,
+    onBackClicked: () -> Unit,
     leaveViewModel: LeaveViewModel = viewModel()
 ) {
     var startDate by remember { mutableStateOf<Date?>(null) }
@@ -42,12 +79,11 @@ fun ApplyLeaveScreen(
     val openEndDateDialog = remember { mutableStateOf(false) }
 
     LaunchedEffect(leaveSubmissionState) {
-        // Use the new LeaveSubmissionState type here
         when (val state = leaveSubmissionState) {
             is LeaveSubmissionState.Success -> {
                 Toast.makeText(context, "Leave request submitted successfully!", Toast.LENGTH_LONG).show()
                 leaveViewModel.resetSubmissionState()
-                navController.popBackStack()
+                onBackClicked()
             }
             is LeaveSubmissionState.Error -> {
                 Toast.makeText(context, state.message, Toast.LENGTH_LONG).show()
@@ -60,9 +96,11 @@ fun ApplyLeaveScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Apply for Leave") },
+                title = { Text("Apply for Leave", fontWeight = FontWeight.SemiBold) },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(
+                        onClick = onBackClicked
+                    ) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
@@ -73,10 +111,18 @@ fun ApplyLeaveScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp)
+                .padding(horizontal = 24.dp, vertical = 16.dp)
                 .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            // Reduced the main spacing between elements
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            Text(
+                text = "Fill in your leave details",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 4.dp) // Reduced bottom padding
+            )
+
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 DateInputField(
                     label = "Start Date",
@@ -92,7 +138,6 @@ fun ApplyLeaveScreen(
                 )
             }
 
-            // Leave Type Dropdown
             ExposedDropdownMenuBox(
                 expanded = isDropdownExpanded,
                 onExpandedChange = { isDropdownExpanded = !isDropdownExpanded }
@@ -105,7 +150,8 @@ fun ApplyLeaveScreen(
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isDropdownExpanded) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .menuAnchor()
+                        .menuAnchor(),
+                    shape = RoundedCornerShape(16.dp)
                 )
                 ExposedDropdownMenu(
                     expanded = isDropdownExpanded,
@@ -123,7 +169,6 @@ fun ApplyLeaveScreen(
                 }
             }
 
-            // Reason TextField
             OutlinedTextField(
                 value = reason,
                 onValueChange = { reason = it },
@@ -131,11 +176,14 @@ fun ApplyLeaveScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(120.dp),
-                placeholder = { Text("Please provide a reason for your leave...") }
+                placeholder = { Text("Please provide a reason for your leave...") },
+                shape = RoundedCornerShape(16.dp)
             )
 
-            // Submit Button
-            Button(
+            // Provides a bit of breathing room before the final action button
+            Spacer(modifier = Modifier.height(16.dp))
+
+            FilledTonalButton(
                 onClick = {
                     if (startDate != null && endDate != null && leaveType.isNotBlank() && reason.isNotBlank()) {
                         leaveViewModel.submitLeaveRequest(startDate!!, endDate!!, leaveType, reason)
@@ -145,15 +193,15 @@ fun ApplyLeaveScreen(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(50.dp),
-                // Use the new LeaveSubmissionState type here
-                enabled = leaveSubmissionState !is LeaveSubmissionState.Loading
+                    .height(56.dp)
+                    .clip(RoundedCornerShape(24.dp)),
+                enabled = leaveSubmissionState !is LeaveSubmissionState.Loading,
+                shape = RoundedCornerShape(24.dp)
             ) {
-                // Use the new LeaveSubmissionState type here
                 if (leaveSubmissionState is LeaveSubmissionState.Loading) {
-                    CircularProgressIndicator(modifier = Modifier.size(24.dp), color = MaterialTheme.colorScheme.onPrimary)
+                    CircularProgressIndicator(modifier = Modifier.size(28.dp), color = MaterialTheme.colorScheme.onSecondaryContainer)
                 } else {
-                    Text("Submit Request", fontWeight = FontWeight.Bold)
+                    Text("Submit Request", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
                 }
             }
         }
@@ -173,8 +221,6 @@ fun ApplyLeaveScreen(
     }
 }
 
-// Helper composables (DateInputField, CustomDatePickerDialog) remain the same as the previous version.
-// ... (You can copy them from the previous response if needed)
 @Composable
 fun DateInputField(label: String, selectedDate: Date?, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val dateFormatter = SimpleDateFormat("dd MMM, yyyy", Locale.getDefault())
@@ -185,14 +231,16 @@ fun DateInputField(label: String, selectedDate: Date?, onClick: () -> Unit, modi
             onValueChange = {},
             label = { Text(label) },
             leadingIcon = { Icon(Icons.Default.DateRange, contentDescription = null) },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth(),
             enabled = false,
             colors = OutlinedTextFieldDefaults.colors(
                 disabledTextColor = MaterialTheme.colorScheme.onSurface,
                 disabledBorderColor = MaterialTheme.colorScheme.outline,
                 disabledLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            ),
+            shape = RoundedCornerShape(16.dp)
         )
     }
 }
@@ -207,8 +255,12 @@ fun CustomDatePickerDialog(onDateSelected: (Date) -> Unit, onDismiss: () -> Unit
         confirmButton = {
             Button(onClick = {
                 selectedDateInMillis?.let {
-                    val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+                    val calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Kolkata"))
                     calendar.timeInMillis = it
+                    calendar.set(Calendar.HOUR_OF_DAY, 0)
+                    calendar.set(Calendar.MINUTE, 0)
+                    calendar.set(Calendar.SECOND, 0)
+                    calendar.set(Calendar.MILLISECOND, 0)
                     onDateSelected(calendar.time)
                 }
                 onDismiss()
