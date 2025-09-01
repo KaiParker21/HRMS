@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.skye.hrms.data.viewmodels.AuthViewModel
+import com.skye.hrms.ui.screens.ApplyLeaveScreen
 import com.skye.hrms.ui.screens.BoardingScreen
 import com.skye.hrms.ui.screens.DashboardScreen
 import com.skye.hrms.ui.screens.HomeScreen
@@ -189,7 +190,26 @@ fun Navigation(
                             inclusive = true
                         }
                     }
+                },
+                onApplyLeaveClicked = {
+                    navController.navigate(Screens.ApplyLeaveScreen.route) {
+                        popUpTo(Screens.DashboardScreen.route) {
+                            inclusive = true
+                        }
+                    }
                 }
+            )
+        }
+
+        composable(
+            route = Screens.ApplyLeaveScreen.route,
+            enterTransition = ScreenTransitions.fadeScaleEnter,
+            exitTransition = ScreenTransitions.fadeScaleExit,
+            popEnterTransition = ScreenTransitions.fadeScalePopEnter,
+            popExitTransition = ScreenTransitions.fadeScalePopExit
+        ) {
+            ApplyLeaveScreen(
+                navController = navController
             )
         }
     }

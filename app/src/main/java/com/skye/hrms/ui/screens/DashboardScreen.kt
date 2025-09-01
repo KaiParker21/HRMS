@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -66,7 +67,8 @@ import java.time.format.DateTimeFormatter
 fun DashboardScreen(
     viewModel: DashboardViewModel = viewModel(),
     authViewModel: AuthViewModel,
-    onSignOut: () -> Unit
+    onSignOut: () -> Unit,
+    onApplyLeaveClicked: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -84,7 +86,7 @@ fun DashboardScreen(
                 clockInTime = uiState.clockInTime,
                 onClockInToggle = { viewModel.toggleClockIn() }
             ) }
-            item { QuickActionsSection() }
+            item { QuickActionsSection(onApplyLeaveClicked) }
             item { TimeOffInfoSection(
                 leaveBalances = uiState.leaveBalances,
                 holidayName = uiState.nextHoliday,
@@ -186,7 +188,9 @@ fun AttendanceCard(
 }
 
 @Composable
-fun QuickActionsSection() {
+fun QuickActionsSection(
+    onApplyLeaveClicked: () -> Unit
+) {
     Column {
         Text(
             text = "Quick Actions",
@@ -198,18 +202,22 @@ fun QuickActionsSection() {
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            item { ActionCard("Apply Leave", Icons.AutoMirrored.Outlined.EventNote, MaterialTheme.colorScheme.tertiaryContainer) }
-            item { ActionCard("View Payslip", Icons.Outlined.Payments, MaterialTheme.colorScheme.primaryContainer) }
-            item { ActionCard("Attendance", Icons.Outlined.CoPresent, MaterialTheme.colorScheme.secondaryContainer) }
-            item { ActionCard("My Documents", Icons.AutoMirrored.Outlined.Article, MaterialTheme.colorScheme.errorContainer) }
+            item { ActionCard("Apply Leave", Icons.AutoMirrored.Outlined.EventNote, MaterialTheme.colorScheme.tertiaryContainer, onCardClicked = onApplyLeaveClicked) }
+            item { ActionCard("View Payslip", Icons.Outlined.Payments, MaterialTheme.colorScheme.primaryContainer, onCardClicked = {}) }
+            item { ActionCard("Attendance", Icons.Outlined.CoPresent, MaterialTheme.colorScheme.secondaryContainer, onCardClicked = {}) }
+            item { ActionCard("My Documents", Icons.AutoMirrored.Outlined.Article, MaterialTheme.colorScheme.errorContainer, onCardClicked = {}) }
         }
     }
 }
 
 @Composable
-fun ActionCard(title: String, icon: ImageVector, backgroundColor: Color) {
+fun ActionCard(title: String, icon: ImageVector, backgroundColor: Color, onCardClicked: () -> Unit) {
     Card(
-        modifier = Modifier.size(120.dp),
+        modifier = Modifier
+            .size(120.dp)
+            .clickable(
+                onClick = onCardClicked
+            ),
         shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = backgroundColor)
     ) {

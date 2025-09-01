@@ -9,4 +9,5 @@ sealed class Screens(val route: String) {
     object OnBoardingScreen: Screens("onboarding_screen")
     object VerificationScreen: Screens("verification_screen")
     object DashboardScreen: Screens("dashboard_screen")
+    object ApplyLeaveScreen: Screens("apply_leave_screen")
 }
