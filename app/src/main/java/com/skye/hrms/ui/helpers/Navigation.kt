@@ -9,9 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.skye.hrms.data.viewmodels.AuthViewModel
 import com.skye.hrms.ui.screens.ApplyLeaveScreen
-import com.skye.hrms.ui.screens.BoardingScreen
 import com.skye.hrms.ui.screens.DashboardScreen
-import com.skye.hrms.ui.screens.HomeScreen
 import com.skye.hrms.ui.screens.LoginScreen
 import com.skye.hrms.ui.screens.OnBoardingScreen
 import com.skye.hrms.ui.screens.SignupScreen
@@ -37,33 +35,7 @@ fun Navigation(
             popExitTransition = ScreenTransitions.fadeScalePopExit
         ) {
             SplashScreen(
-                navController = navController,
-                authViewModel = authViewModel
-            )
-        }
-
-        composable(
-            route = Screens.BoardingScreen.route,
-            enterTransition = ScreenTransitions.fadeScaleEnter,
-            exitTransition = ScreenTransitions.fadeScaleExit,
-            popEnterTransition = ScreenTransitions.fadeScalePopEnter,
-            popExitTransition = ScreenTransitions.fadeScalePopExit
-        ) {
-            BoardingScreen(
-                onNavigateToRegister = {
-                    navController.navigate(Screens.SignupScreen.route) {
-                        popUpTo(Screens.BoardingScreen.route) {
-                            inclusive = true
-                        }
-                    }
-                },
-                onNavigateToLogin = {
-                    navController.navigate(Screens.LoginScreen.route) {
-                        popUpTo(Screens.BoardingScreen.route) {
-                            inclusive = true
-                        }
-                    }
-                }
+                navController = navController
             )
         }
 
@@ -119,16 +91,6 @@ fun Navigation(
                 }
             )
 
-        }
-
-        composable(
-            route = Screens.HomeScreen.route,
-            enterTransition = ScreenTransitions.fadeScaleEnter,
-            exitTransition = ScreenTransitions.fadeScaleExit,
-            popEnterTransition = ScreenTransitions.fadeScalePopEnter,
-            popExitTransition = ScreenTransitions.fadeScalePopExit
-        ) {
-            HomeScreen()
         }
 
         composable(

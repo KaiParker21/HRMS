@@ -44,16 +44,12 @@ data class OnboardingFormData(
     val emergencyContactName: String = "",
     val emergencyContactNumber: String = "",
 
-    // --- CHANGES START HERE ---
-    // Added fields to ensure every new user document has the required data for the dashboard.
-
     val isClockedIn: Boolean = false,
     val lastClockInTime: Timestamp? = null,
     val leaveBalances: List<Map<String, Any>> = listOf(
         mapOf("type" to "Casual", "balance" to 12.0, "total" to 12.0),
         mapOf("type" to "Sick", "balance" to 6.0, "total" to 6.0)
     )
-    // --- CHANGES END HERE ---
 )
 
 class OnboardingViewModel: ViewModel() {

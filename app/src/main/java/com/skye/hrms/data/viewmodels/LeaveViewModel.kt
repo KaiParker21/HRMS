@@ -43,11 +43,9 @@ class LeaveViewModel : ViewModel() {
 
         viewModelScope.launch {
             try {
-                // First, fetch the user's full name from their employee profile
                 val employeeDoc = db.collection("employees").document(user.uid).get().await()
                 val fullName = employeeDoc.getString("fullName") ?: "Unknown User"
 
-                // Create the leave request map
                 val leaveRequest = hashMapOf(
                     "userId" to user.uid,
                     "fullName" to fullName,
@@ -59,7 +57,6 @@ class LeaveViewModel : ViewModel() {
                     "requestedAt" to FieldValue.serverTimestamp()
                 )
 
-                // Add the new document to the 'leave_requests' collection
                 db.collection("leave_requests").add(leaveRequest).await()
                 _leaveSubmissionState.value = LeaveSubmissionState.Success
 
@@ -69,7 +66,6 @@ class LeaveViewModel : ViewModel() {
         }
     }
 
-    // Function to reset the state, e.g., after the UI has shown a success message
     fun resetSubmissionState() {
         _leaveSubmissionState.value = LeaveSubmissionState.Idle
     }

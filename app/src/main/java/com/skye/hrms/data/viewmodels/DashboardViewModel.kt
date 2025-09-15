@@ -1,5 +1,7 @@
 package com.skye.hrms.data.viewmodels
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
@@ -19,20 +21,20 @@ import java.time.ZoneId
 data class LeaveInfo(val type: String, val balance: Float, val total: Float)
 data class TeamMember(val name: String, val avatarUrl: String)
 
-// The UI State now includes loading and error handling
 data class DashboardUiState(
     val employeeName: String = "",
     val isClockedIn: Boolean = false,
     val clockInTime: LocalTime? = null,
     val leaveBalances: List<LeaveInfo> = emptyList(),
-    val nextHoliday: String = "Independence Day", // Can be moved to Firestore later
-    val nextHolidayDate: String = "15 August", // Can be moved to Firestore later
+    val nextHoliday: String = "Independence Day",
+    val nextHolidayDate: String = "15 August",
     val announcements: List<String> = emptyList(),
-    val team: List<TeamMember> = emptyList(), // Team data can be fetched in a similar way
+    val team: List<TeamMember> = emptyList(),
     val isLoading: Boolean = true,
     val errorMessage: String? = null
 )
 
+@RequiresApi(Build.VERSION_CODES.O)
 class DashboardViewModel : ViewModel() {
 
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
@@ -45,6 +47,7 @@ class DashboardViewModel : ViewModel() {
         loadDashboardData()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun loadDashboardData() {
         _uiState.update { it.copy(isLoading = true) }
         val userId = auth.currentUser?.uid
@@ -56,14 +59,12 @@ class DashboardViewModel : ViewModel() {
 
         viewModelScope.launch {
             try {
-                // --- Fetch Employee-Specific Data ---
                 val employeeDoc = db.collection("employees").document(userId).get().await()
                 val employeeName = employeeDoc.getString("fullName") ?: "Employee"
                 val isClockedIn = employeeDoc.getBoolean("isClockedIn") ?: false
                 val clockInTimestamp = employeeDoc.getTimestamp("lastClockInTime")
                 val clockInTime = clockInTimestamp?.toLocalTime()
 
-                // Fetch leave balances (stored as an array of maps in Firestore)
                 val leaveBalancesList = mutableListOf<LeaveInfo>()
                 val leavesData = employeeDoc.get("leaveBalances") as? List<HashMap<String, Any>>
                 leavesData?.forEach { leaveMap ->
@@ -76,7 +77,6 @@ class DashboardViewModel : ViewModel() {
                     )
                 }
 
-                // --- Fetch Global Announcements ---
                 val announcementsList = mutableListOf<String>()
                 val announcementSnapshot = db.collection("announcements")
                     .orderBy("createdAt", Query.Direction.DESCENDING)
@@ -89,7 +89,6 @@ class DashboardViewModel : ViewModel() {
                     )
                 }
 
-                // --- Update State on Success ---
                 _uiState.update {
                     it.copy(
                         isLoading = false,
@@ -114,31 +113,26 @@ class DashboardViewModel : ViewModel() {
 
         viewModelScope.launch {
             try {
-                // Update the document in Firestore
                 val employeeRef = db.collection("employees").document(userId)
                 if (newClockInStatus) {
-                    // Clocking IN: set status to true and update the timestamp
                     employeeRef.update(
                         "isClockedIn", true,
                         "lastClockInTime", FieldValue.serverTimestamp()
                     ).await()
-                    // Update local state immediately for snappy UI
                     _uiState.update {
                         it.copy(isClockedIn = true, clockInTime = LocalTime.now())
                     }
                 } else {
-                    // Clocking OUT: set status to false
                     employeeRef.update("isClockedIn", false).await()
                     _uiState.update { it.copy(isClockedIn = false, clockInTime = null) }
                 }
             } catch (e: Exception) {
-                // If the update fails, you could show an error to the user
                 _uiState.update { it.copy(errorMessage = "Failed to update status: ${e.message}") }
             }
         }
     }
 
-    // Helper function to convert Firebase Timestamp to LocalTime
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun Timestamp.toLocalTime(): LocalTime {
         return Instant.ofEpochSecond(this.seconds)
             .atZone(ZoneId.systemDefault())

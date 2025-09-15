@@ -1,5 +1,6 @@
 package com.skye.hrms.ui.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
@@ -96,6 +97,7 @@ fun SignupScreen(
         }
     }
 
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     Scaffold { paddingValues ->
         Box(
             modifier = Modifier

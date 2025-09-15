@@ -113,14 +113,13 @@ fun ApplyLeaveScreen(
                 .padding(paddingValues)
                 .padding(horizontal = 24.dp, vertical = 16.dp)
                 .verticalScroll(rememberScrollState()),
-            // Reduced the main spacing between elements
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
                 text = "Fill in your leave details",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(bottom = 4.dp) // Reduced bottom padding
+                modifier = Modifier.padding(bottom = 4.dp)
             )
 
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -180,7 +179,6 @@ fun ApplyLeaveScreen(
                 shape = RoundedCornerShape(16.dp)
             )
 
-            // Provides a bit of breathing room before the final action button
             Spacer(modifier = Modifier.height(16.dp))
 
             FilledTonalButton(
