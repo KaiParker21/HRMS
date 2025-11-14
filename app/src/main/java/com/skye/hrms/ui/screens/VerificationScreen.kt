@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.skye.hrms.data.viewmodels.AuthViewModel
 import com.skye.hrms.data.viewmodels.VerificationState
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun VerificationScreen(
     authViewModel: AuthViewModel,
@@ -98,7 +99,7 @@ fun VerificationScreen(
                         .height(50.dp)
                 ) {
                     if (isLoading) {
-                        CircularProgressIndicator(modifier = Modifier.size(24.dp), color = MaterialTheme.colorScheme.onPrimary)
+                        CircularWavyProgressIndicator()
                     } else {
                         Text("I've Verified My Email")
                     }

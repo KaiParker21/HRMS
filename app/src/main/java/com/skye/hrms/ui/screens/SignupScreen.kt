@@ -44,7 +44,7 @@ import com.skye.hrms.data.viewmodels.AuthViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SignupScreen(
     authViewModel: AuthViewModel,
@@ -311,10 +311,7 @@ fun SignupScreen(
                             )
                         ) {
                             if (isLoading) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(24.dp),
-                                    color = MaterialTheme.colorScheme.onPrimary
-                                )
+                                CircularWavyProgressIndicator()
                             } else {
                                 Text(text = "Sign Up", style = MaterialTheme.typography.titleMedium)
                                 Spacer(modifier = Modifier.width(8.dp))

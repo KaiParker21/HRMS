@@ -2,7 +2,9 @@ package com.skye.hrms.ui.themes
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MotionScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
@@ -311,6 +313,7 @@ val unspecified_scheme = ColorFamily(
     Color.Unspecified, Color.Unspecified, Color.Unspecified, Color.Unspecified
 )
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun HRMSTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -331,7 +334,8 @@ fun HRMSTheme(
   MaterialTheme(
     colorScheme = colorScheme,
     typography = AppTypography,
-    content = content
+    content = content,
+      motionScheme = MotionScheme.expressive()
   )
 }
 

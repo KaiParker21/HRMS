@@ -66,6 +66,7 @@ private fun validateStep(step: Int, formData: OnboardingFormData): Set<String> {
     return errors
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun OnBoardingScreen(
     onboardingViewModel: OnboardingViewModel = viewModel(),
@@ -170,7 +171,7 @@ fun OnBoardingScreen(
                 modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.5f)),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator()
+                CircularWavyProgressIndicator()
             }
         }
     }

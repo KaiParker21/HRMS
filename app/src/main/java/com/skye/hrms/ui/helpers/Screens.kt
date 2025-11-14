@@ -8,4 +8,8 @@ sealed class Screens(val route: String) {
     object VerificationScreen: Screens("verification_screen")
     object DashboardScreen: Screens("dashboard_screen")
     object ApplyLeaveScreen: Screens("apply_leave_screen")
+    object AttendanceScreen: Screens("attendance_screen")
+    object PayslipScreen: Screens("payslip_screen")
+    object MyDocumentsScreen: Screens("my_documents_screen")
+
 }

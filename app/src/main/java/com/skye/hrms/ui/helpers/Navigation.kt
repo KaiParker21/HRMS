@@ -3,15 +3,19 @@ package com.skye.hrms.ui.helpers
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Composition
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.skye.hrms.data.viewmodels.AuthViewModel
 import com.skye.hrms.ui.screens.ApplyLeaveScreen
+import com.skye.hrms.ui.screens.AttendanceScreen
 import com.skye.hrms.ui.screens.DashboardScreen
 import com.skye.hrms.ui.screens.LoginScreen
+import com.skye.hrms.ui.screens.MyDocumentsScreen
 import com.skye.hrms.ui.screens.OnBoardingScreen
+import com.skye.hrms.ui.screens.PayslipScreen
 import com.skye.hrms.ui.screens.SignupScreen
 import com.skye.hrms.ui.screens.SplashScreen
 import com.skye.hrms.ui.screens.VerificationScreen
@@ -154,11 +158,58 @@ fun Navigation(
                     }
                 },
                 onApplyLeaveClicked = {
-                    navController.navigate(Screens.ApplyLeaveScreen.route) {
-                        popUpTo(Screens.DashboardScreen.route) {
-                            inclusive = true
-                        }
-                    }
+                    navController.navigate(Screens.ApplyLeaveScreen.route)
+                },
+                onAttendanceClicked = {
+                    navController.navigate(Screens.AttendanceScreen.route)
+                },
+                onPayslipClicked = {
+                    navController.navigate(Screens.PayslipScreen.route)
+                },
+                onMyDocumentsClicked = {
+                    navController.navigate(Screens.MyDocumentsScreen.route)
+                }
+            )
+        }
+
+        composable(
+            route = Screens.MyDocumentsScreen.route,
+            enterTransition = ScreenTransitions.fadeScaleEnter,
+            exitTransition = ScreenTransitions.fadeScaleExit,
+            popEnterTransition = ScreenTransitions.fadeScalePopEnter,
+            popExitTransition = ScreenTransitions.fadeScalePopExit
+        ) {
+            MyDocumentsScreen(
+                onBackClicked = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = Screens.PayslipScreen.route,
+            enterTransition = ScreenTransitions.fadeScaleEnter,
+            exitTransition = ScreenTransitions.fadeScaleExit,
+            popEnterTransition = ScreenTransitions.fadeScalePopEnter,
+            popExitTransition = ScreenTransitions.fadeScalePopExit
+        ) {
+            PayslipScreen(
+                onBackClicked = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = Screens.AttendanceScreen.route,
+            enterTransition = ScreenTransitions.fadeScaleEnter,
+            exitTransition = ScreenTransitions.fadeScaleExit,
+            popEnterTransition = ScreenTransitions.fadeScalePopEnter,
+            popExitTransition = ScreenTransitions.fadeScalePopExit
+        ) {
+            AttendanceScreen(
+                onBackClicked = {
+                    navController.popBackStack()
                 }
             )
         }

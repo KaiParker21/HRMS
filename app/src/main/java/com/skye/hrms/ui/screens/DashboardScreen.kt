@@ -69,7 +69,10 @@ fun DashboardScreen(
     viewModel: DashboardViewModel = viewModel(),
     authViewModel: AuthViewModel,
     onSignOut: () -> Unit,
-    onApplyLeaveClicked: () -> Unit
+    onApplyLeaveClicked: () -> Unit,
+    onAttendanceClicked: () -> Unit,
+    onPayslipClicked: () -> Unit,
+    onMyDocumentsClicked: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -93,7 +96,12 @@ fun DashboardScreen(
                 clockInTime = uiState.clockInTime,
                 onClockInToggle = { viewModel.toggleClockIn() }
             ) }
-            item { QuickActionsSection(onApplyLeaveClicked) }
+            item { QuickActionsSection(
+                onApplyLeaveClicked,
+                onAttendanceClicked,
+                onPayslipClicked,
+                onMyDocumentsClicked
+            ) }
             item { TimeOffInfoSection(
                 leaveBalances = uiState.leaveBalances,
                 holidayName = uiState.nextHoliday,
@@ -215,7 +223,10 @@ fun AttendanceCard(
 
 @Composable
 fun QuickActionsSection(
-    onApplyLeaveClicked: () -> Unit
+    onApplyLeaveClicked: () -> Unit,
+    onAttendanceClicked: () -> Unit,
+    onPayslipClicked: () -> Unit,
+    onMyDocumentsClicked: () -> Unit
 ) {
     Column {
         Text(
@@ -229,9 +240,9 @@ fun QuickActionsSection(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             item { ActionCard("Apply Leave", Icons.AutoMirrored.Outlined.EventNote, MaterialTheme.colorScheme.tertiaryContainer, onCardClicked = onApplyLeaveClicked) }
-            item { ActionCard("View Payslip", Icons.Outlined.Payments, MaterialTheme.colorScheme.primaryContainer, onCardClicked = {}) }
-            item { ActionCard("Attendance", Icons.Outlined.CoPresent, MaterialTheme.colorScheme.secondaryContainer, onCardClicked = {}) }
-            item { ActionCard("My Documents", Icons.AutoMirrored.Outlined.Article, MaterialTheme.colorScheme.errorContainer, onCardClicked = {}) }
+            item { ActionCard("View Payslip", Icons.Outlined.Payments, MaterialTheme.colorScheme.primaryContainer, onCardClicked = onPayslipClicked) }
+            item { ActionCard("Attendance", Icons.Outlined.CoPresent, MaterialTheme.colorScheme.secondaryContainer, onCardClicked = onAttendanceClicked) }
+            item { ActionCard("My Documents", Icons.AutoMirrored.Outlined.Article, MaterialTheme.colorScheme.errorContainer, onCardClicked = onMyDocumentsClicked) }
         }
     }
 }

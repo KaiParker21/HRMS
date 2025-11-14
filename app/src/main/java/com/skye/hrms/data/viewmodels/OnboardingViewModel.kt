@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.util.UUID
 
+// Submission State
 sealed class SubmissionState {
     object Idle : SubmissionState()
     object Loading : SubmissionState()
@@ -19,6 +20,7 @@ sealed class SubmissionState {
     data class Error(val message: String) : SubmissionState()
 }
 
+// Data class for education item
 data class EducationItem(
     val id: String = UUID.randomUUID().toString(),
     val degree: String = "",
@@ -27,6 +29,7 @@ data class EducationItem(
     val specialisation: String = ""
 )
 
+// Data class for onboarding data
 data class OnboardingFormData(
     val role: String = "EMPLOYEE",
     val fullName: String = "",
@@ -52,6 +55,7 @@ data class OnboardingFormData(
     )
 )
 
+
 class OnboardingViewModel: ViewModel() {
 
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
@@ -66,6 +70,7 @@ class OnboardingViewModel: ViewModel() {
     private val _formData = MutableStateFlow(OnboardingFormData())
     val formData = _formData.asStateFlow()
 
+    // Function to submit the form
     fun submitForm() {
         _submissionState.value = SubmissionState.Loading
         val userID = auth.currentUser?.uid

@@ -13,6 +13,7 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
+// AuthState
 sealed class AuthState {
     object Idle: AuthState()
     object Loading: AuthState()
@@ -21,6 +22,7 @@ sealed class AuthState {
     data class Error(val message: String): AuthState()
 }
 
+// Verification state
 sealed class VerificationState {
     object Idle: VerificationState()
     object Loading: VerificationState()
@@ -39,6 +41,7 @@ class AuthViewModel: ViewModel() {
     private val _verificationState = MutableLiveData<VerificationState>(VerificationState.Idle)
     val verificationState: LiveData<VerificationState> get() = _verificationState
 
+    // Register Function
     fun signUpWithEmailAndPassword(email: String, password: String) {
         _authState.value = AuthState.Loading
         viewModelScope.launch {
@@ -57,6 +60,7 @@ class AuthViewModel: ViewModel() {
         }
     }
 
+    // Login function
     fun signInWithEmailAndPassword(email: String, password: String) {
         _authState.value = AuthState.Loading
         viewModelScope.launch {
@@ -74,6 +78,7 @@ class AuthViewModel: ViewModel() {
         }
     }
 
+    // Function to send Verification Email
     fun sendVerificationEmail() {
         viewModelScope.launch {
             try {
@@ -85,6 +90,7 @@ class AuthViewModel: ViewModel() {
         }
     }
 
+    // Function to check whether email is verified or not
     fun checkVerificationStatus() {
         _verificationState.value = VerificationState.Loading
         viewModelScope.launch {
@@ -101,6 +107,7 @@ class AuthViewModel: ViewModel() {
         }
     }
 
+    // Signout function
     fun signOut() {
         auth.signOut()
         _authState.value = AuthState.Unauthenticated

@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.util.Date
 
+// Leave State
 sealed class LeaveSubmissionState {
     object Idle : LeaveSubmissionState()
     object Loading : LeaveSubmissionState()
@@ -66,6 +67,7 @@ class LeaveViewModel : ViewModel() {
         }
     }
 
+    // Funcition to reset submission state
     fun resetSubmissionState() {
         _leaveSubmissionState.value = LeaveSubmissionState.Idle
     }

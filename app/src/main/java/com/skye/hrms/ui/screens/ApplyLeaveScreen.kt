@@ -20,10 +20,12 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FilledTonalButton
@@ -58,7 +60,7 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ApplyLeaveScreen(
     onBackClicked: () -> Unit,
@@ -197,7 +199,7 @@ fun ApplyLeaveScreen(
                 shape = RoundedCornerShape(24.dp)
             ) {
                 if (leaveSubmissionState is LeaveSubmissionState.Loading) {
-                    CircularProgressIndicator(modifier = Modifier.size(28.dp), color = MaterialTheme.colorScheme.onSecondaryContainer)
+                    CircularWavyProgressIndicator()
                 } else {
                     Text("Submit Request", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
                 }

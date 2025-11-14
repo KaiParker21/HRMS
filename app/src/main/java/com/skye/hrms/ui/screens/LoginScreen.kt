@@ -1,5 +1,6 @@
 package com.skye.hrms.ui.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
@@ -41,6 +42,8 @@ import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.CircularWavyProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -74,7 +77,7 @@ import com.skye.hrms.data.viewmodels.AuthViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun LoginScreen(
     authViewModel: AuthViewModel,
@@ -114,7 +117,8 @@ fun LoginScreen(
     val isLoading = authState is AuthState.Loading
     val isError = errorMessage != null
 
-    Scaffold { paddingValues ->
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+    Scaffold {  paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -144,7 +148,6 @@ fun LoginScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-
                 AnimatedVisibility(
                     visible = isVisible,
                     enter = fadeIn(animationSpec = tween(1000)) + slideInVertically(
@@ -312,10 +315,7 @@ fun LoginScreen(
                             )
                         ) {
                             if (isLoading) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(24.dp),
-                                    color = MaterialTheme.colorScheme.onPrimary
-                                )
+                                CircularWavyProgressIndicator()
                             } else {
                                 Text(text = "Login", style = MaterialTheme.typography.titleMedium)
                                 Spacer(modifier = Modifier.width(8.dp))
