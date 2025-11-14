@@ -48,11 +48,14 @@ fun AttendanceScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
-            contentAlignment = Alignment.Center
+//            contentAlignment = Alignment.Center
         ) {
             when {
                 uiState.isLoading -> {
-                    CircularWavyProgressIndicator()
+                    CircularWavyProgressIndicator(
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                    )
                 }
                 uiState.errorMessage != null -> {
                     Text(

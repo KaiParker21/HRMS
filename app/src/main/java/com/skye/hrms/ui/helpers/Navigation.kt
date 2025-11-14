@@ -19,6 +19,7 @@ import com.skye.hrms.ui.screens.PayslipScreen
 import com.skye.hrms.ui.screens.SignupScreen
 import com.skye.hrms.ui.screens.SplashScreen
 import com.skye.hrms.ui.screens.VerificationScreen
+import com.skye.hrms.ui.screens.admin.AdminDashboardScreen
 
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
@@ -230,6 +231,16 @@ fun Navigation(
                     }
                 }
             )
+        }
+
+        composable(
+            route = Screens.AdminDashboardScreen.route,
+            enterTransition = ScreenTransitions.fadeScaleEnter,
+            exitTransition = ScreenTransitions.fadeScaleExit,
+            popEnterTransition = ScreenTransitions.fadeScalePopEnter,
+            popExitTransition = ScreenTransitions.fadeScalePopExit
+        ) {
+            AdminDashboardScreen()
         }
     }
 }

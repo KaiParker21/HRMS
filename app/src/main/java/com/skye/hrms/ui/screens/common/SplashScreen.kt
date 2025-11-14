@@ -59,9 +59,18 @@ fun SplashScreen(
                         .await()
 
                     if (doc.exists()) {
-                        navController.navigate(Screens.DashboardScreen.route) {
-                            popUpTo(Screens.SplashScreen.route) { inclusive = true }
+                        val role = doc.getString("role") ?: "EMPLOYEE"
+
+                        if (role == "ADMIN") {
+                            navController.navigate(Screens.AdminDashboardScreen.route) {
+                                popUpTo(Screens.SplashScreen.route) { inclusive = true }
+                            }
+                        } else {
+                            navController.navigate(Screens.DashboardScreen.route) {
+                                popUpTo(Screens.SplashScreen.route) { inclusive = true }
+                            }
                         }
+
                     } else {
                         navController.navigate(Screens.OnBoardingScreen.route) {
                             popUpTo(Screens.SplashScreen.route) { inclusive = true }
