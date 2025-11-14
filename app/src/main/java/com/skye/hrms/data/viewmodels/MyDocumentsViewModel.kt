@@ -3,6 +3,7 @@ package com.skye.hrms.data.viewmodels
 import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
@@ -124,6 +125,37 @@ class MyDocumentsViewModel : ViewModel() {
 
             } catch (e: Exception) {
                 _uploadState.value = UploadState.Error(e.message ?: "File upload failed")
+            }
+        }
+    }
+
+    fun deleteDocument(document: DocumentInfo) {
+        viewModelScope.launch {
+            try {
+                // Step 1: Delete the file from Firebase Storage
+                // We use storagePath (e.g., "documents/userId/file.pdf")
+                if (document.storagePath.isNotEmpty()) {
+                    storage.getReference(document.storagePath).delete().await()
+                } else {
+                    // Fallback for older data without storagePath
+                    storage.getReferenceFromUrl(document.downloadUrl).delete().await()
+                }
+
+                // Step 2: Delete the metadata document from Cloud Firestore
+                db.collection("employees").document(userId)
+                    .collection("documents")
+                    .document(document.id)
+                    .delete()
+                    .await()
+
+                // Step 3: Refresh the local UI list
+                fetchDocuments()
+
+            } catch (e: Exception) {
+                // Handle errors (e.g., show a toast via a state)
+                Log.e("DeleteError", "Failed to delete document: ${e.message}")
+                // Optionally re-fetch to ensure UI is in sync
+                fetchDocuments()
             }
         }
     }

@@ -17,6 +17,9 @@ import androidx.compose.material.icons.automirrored.outlined.Article
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Badge
 import androidx.compose.material.icons.outlined.CloudDownload
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Image
+import androidx.compose.material.icons.outlined.PictureAsPdf
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -32,9 +35,10 @@ import com.skye.hrms.data.viewmodels.DocumentInfo
 import com.skye.hrms.data.viewmodels.DocumentUiState
 import com.skye.hrms.data.viewmodels.MyDocumentsViewModel
 import com.skye.hrms.data.viewmodels.UploadState
+import com.skye.hrms.ui.components.DocumentFabMenu
 import com.skye.hrms.ui.themes.HRMSTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun MyDocumentsScreen(
     onBackClicked: () -> Unit,
@@ -43,6 +47,10 @@ fun MyDocumentsScreen(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
     val uploadState by viewModel.uploadState.collectAsState()
+
+    var fabExpanded by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var documentToDelete by remember { mutableStateOf<DocumentInfo?>(null) }
 
     // File Picker Launcher
     val filePickerLauncher = rememberLauncherForActivityResult(
@@ -76,9 +84,16 @@ fun MyDocumentsScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { filePickerLauncher.launch("*/*") }) {
-                Icon(Icons.Default.Add, contentDescription = "Upload Document")
-            }
+            DocumentFabMenu(
+                expanded = fabExpanded,
+                onToggle = { fabExpanded = it },
+                onItemClicked = { item ->
+                    // Launch the file picker with the specific MIME type
+                    filePickerLauncher.launch(item.mimeType)
+                    // Close the menu after clicking
+                    fabExpanded = false
+                }
+            )
         }
     ) { paddingValues ->
         Box(
@@ -89,7 +104,7 @@ fun MyDocumentsScreen(
         ) {
             when (val state = uiState) {
                 is DocumentUiState.Loading -> {
-                    CircularProgressIndicator()
+                    CircularWavyProgressIndicator()
                 }
                 is DocumentUiState.Error -> {
                     Text(
@@ -117,6 +132,10 @@ fun MyDocumentsScreen(
                                     document = doc,
                                     onViewClicked = {
                                         downloadDocument(context, doc.downloadUrl, doc.fileName)
+                                    },
+                                    onDeleteClicked = {
+                                        documentToDelete = doc
+                                        showDeleteDialog = true
                                     }
                                 )
                             }
@@ -128,11 +147,13 @@ fun MyDocumentsScreen(
             // Show a full-screen loading overlay during upload
             AnimatedVisibility(visible = uploadState is UploadState.Uploading) {
                 Box(
-                    modifier = Modifier.fillMaxSize().padding(paddingValues),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
                     contentAlignment = Alignment.Center
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        CircularProgressIndicator()
+                        CircularWavyProgressIndicator()
                         Spacer(modifier = Modifier.height(16.dp))
                         Text("Uploading file, please wait...")
                     }
@@ -140,14 +161,57 @@ fun MyDocumentsScreen(
             }
         }
     }
+
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showDeleteDialog = false
+                documentToDelete = null
+            },
+            title = { Text("Delete Document") },
+            text = { Text("Are you sure you want to delete '${documentToDelete?.fileName}'? This action cannot be undone.") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        documentToDelete?.let {
+                            viewModel.deleteDocument(it) // Call the ViewModel function
+                        }
+                        showDeleteDialog = false
+                        documentToDelete = null
+                    }
+                ) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showDeleteDialog = false
+                        documentToDelete = null
+                    }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
 }
 
 @Composable
-fun DocumentItem(document: DocumentInfo, onViewClicked: () -> Unit) {
-    // Simple icon logic, you can expand this
-    val icon = when {
-        document.title.contains("Letter", true) -> Icons.Outlined.Badge
-        else -> Icons.AutoMirrored.Outlined.Article
+fun DocumentItem(
+    document: DocumentInfo,
+    onViewClicked: () -> Unit,
+    onDeleteClicked: () -> Unit
+) {
+    // Get the file extension from the fileName
+    val fileExtension = document.fileName.substringAfterLast('.', "").lowercase()
+
+    // Choose an icon based on the file extension
+    val icon: ImageVector = when (fileExtension) {
+        "pdf" -> Icons.Outlined.PictureAsPdf
+        "jpg", "jpeg", "png" -> Icons.Outlined.Image
+        "doc", "docx" -> Icons.AutoMirrored.Outlined.Article
+        else -> Icons.AutoMirrored.Outlined.Article // Default file icon
     }
 
     Card(
@@ -155,12 +219,12 @@ fun DocumentItem(document: DocumentInfo, onViewClicked: () -> Unit) {
         shape = MaterialTheme.shapes.medium
     ) {
         Row(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(start = 16.dp, end = 8.dp, top = 16.dp, bottom = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                imageVector = icon,
-                contentDescription = "Document",
+                imageVector = icon, // <-- New dynamic icon
+                contentDescription = "File Type",
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(32.dp)
             )
@@ -169,22 +233,34 @@ fun DocumentItem(document: DocumentInfo, onViewClicked: () -> Unit) {
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = document.title,
+                    text = document.title, // <-- Still shows title
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1
                 )
                 Text(
-                    text = "Uploaded: ${document.dateUploaded}",
+                    text = document.fileName, // <-- Shows the actual filename
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1
                 )
             }
 
+            // Download button
             IconButton(onClick = onViewClicked) {
                 Icon(
                     imageVector = Icons.Outlined.CloudDownload,
                     contentDescription = "Download Document",
                     tint = MaterialTheme.colorScheme.primary
+                )
+            }
+
+            // Delete button
+            IconButton(onClick = onDeleteClicked) {
+                Icon(
+                    imageVector = Icons.Outlined.Delete,
+                    contentDescription = "Delete Document",
+                    tint = MaterialTheme.colorScheme.error
                 )
             }
         }
