@@ -311,7 +311,7 @@ fun SignupScreen(
                             )
                         ) {
                             if (isLoading) {
-                                CircularWavyProgressIndicator()
+                                LoadingIndicator()
                             } else {
                                 Text(text = "Sign Up", style = MaterialTheme.typography.titleMedium)
                                 Spacer(modifier = Modifier.width(8.dp))

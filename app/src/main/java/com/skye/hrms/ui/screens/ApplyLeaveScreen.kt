@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -19,18 +18,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -43,6 +39,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -54,6 +51,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.skye.hrms.data.viewmodels.LeaveSubmissionState
 import com.skye.hrms.data.viewmodels.LeaveViewModel
+import com.skye.hrms.ui.components.SingleChoiceButtonGroup
+import com.skye.hrms.ui.components.leaves
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -68,15 +67,11 @@ fun ApplyLeaveScreen(
 ) {
     var startDate by remember { mutableStateOf<Date?>(null) }
     var endDate by remember { mutableStateOf<Date?>(null) }
-    var leaveType by remember { mutableStateOf("") }
+    var leaveType by remember { mutableStateOf(leaves[0].name) }
     var reason by remember { mutableStateOf("") }
-    var isDropdownExpanded by remember { mutableStateOf(false) }
-
-    val leaveTypes = listOf("Casual", "Sick", "Earned", "Unpaid")
     val context = LocalContext.current
-
     val leaveSubmissionState by leaveViewModel.submissionState.collectAsState()
-
+    var selectedLeaveIndex by remember { mutableIntStateOf(0) }
     val openStartDateDialog = remember { mutableStateOf(false) }
     val openEndDateDialog = remember { mutableStateOf(false) }
 
@@ -139,36 +134,44 @@ fun ApplyLeaveScreen(
                 )
             }
 
-            ExposedDropdownMenuBox(
-                expanded = isDropdownExpanded,
-                onExpandedChange = { isDropdownExpanded = !isDropdownExpanded }
-            ) {
-                OutlinedTextField(
-                    value = leaveType,
-                    onValueChange = {},
-                    readOnly = true,
-                    label = { Text("Leave Type") },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isDropdownExpanded) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .menuAnchor(),
-                    shape = RoundedCornerShape(16.dp)
-                )
-                ExposedDropdownMenu(
-                    expanded = isDropdownExpanded,
-                    onDismissRequest = { isDropdownExpanded = false }
-                ) {
-                    leaveTypes.forEach { type ->
-                        DropdownMenuItem(
-                            text = { Text(type) },
-                            onClick = {
-                                leaveType = type
-                                isDropdownExpanded = false
-                            }
-                        )
-                    }
+            SingleChoiceButtonGroup(
+                selectedIndex = selectedLeaveIndex,
+                onSelectionChanged = { newIndex ->
+                    selectedLeaveIndex = newIndex
+                    leaveType = leaves[newIndex].name
                 }
-            }
+            )
+
+//            ExposedDropdownMenuBox(
+//                expanded = isDropdownExpanded,
+//                onExpandedChange = { isDropdownExpanded = !isDropdownExpanded }
+//            ) {
+//                OutlinedTextField(
+//                    value = leaveType,
+//                    onValueChange = {},
+//                    readOnly = true,
+//                    label = { Text("Leave Type") },
+//                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isDropdownExpanded) },
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .menuAnchor(),
+//                    shape = RoundedCornerShape(16.dp)
+//                )
+//                ExposedDropdownMenu(
+//                    expanded = isDropdownExpanded,
+//                    onDismissRequest = { isDropdownExpanded = false }
+//                ) {
+//                    leaveTypes.forEach { type ->
+//                        DropdownMenuItem(
+//                            text = { Text(type) },
+//                            onClick = {
+//                                leaveType = type
+//                                isDropdownExpanded = false
+//                            }
+//                        )
+//                    }
+//                }
+//            }
 
             OutlinedTextField(
                 value = reason,
@@ -199,7 +202,8 @@ fun ApplyLeaveScreen(
                 shape = RoundedCornerShape(24.dp)
             ) {
                 if (leaveSubmissionState is LeaveSubmissionState.Loading) {
-                    CircularWavyProgressIndicator()
+                    LoadingIndicator()
+//                    CircularWavyProgressIndicator()
                 } else {
                     Text("Submit Request", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
                 }

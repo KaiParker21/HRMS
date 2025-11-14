@@ -171,7 +171,7 @@ fun OnBoardingScreen(
                 modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.5f)),
                 contentAlignment = Alignment.Center
             ) {
-                CircularWavyProgressIndicator()
+                LoadingIndicator()
             }
         }
     }

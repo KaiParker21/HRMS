@@ -104,6 +104,7 @@ fun MyDocumentsScreen(
         ) {
             when (val state = uiState) {
                 is DocumentUiState.Loading -> {
+//                    ContainedLoadingIndicator()
                     CircularWavyProgressIndicator()
                 }
                 is DocumentUiState.Error -> {
@@ -153,7 +154,8 @@ fun MyDocumentsScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        CircularWavyProgressIndicator()
+                        ContainedLoadingIndicator()
+//                        CircularWavyProgressIndicator()
                         Spacer(modifier = Modifier.height(16.dp))
                         Text("Uploading file, please wait...")
                     }
