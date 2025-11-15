@@ -14,5 +14,8 @@ sealed class Screens(val route: String) {
     object AdminDashboardScreen: Screens("admin_dashboard_screen")
     object LeaveApprovalScreen: Screens("leave_approval_screen")
     object EmployeeListScreen: Screens("employee_list_screen")
+    object EmployeeDetailScreen : Screens("employee_detail_screen/{userId}") {
+        fun createRoute(userId: String) = "employee_detail_screen/$userId"
+    }
 
 }

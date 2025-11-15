@@ -34,8 +34,8 @@ import com.skye.hrms.data.viewmodels.admin.EmployeeListViewModel
 @Composable
 fun EmployeeListScreen(
     onBackClicked: () -> Unit,
-    viewModel: EmployeeListViewModel = viewModel()
-    // Add onEmployeeClicked lambda here later
+    viewModel: EmployeeListViewModel = viewModel(),
+    onEmployeeClicked: (String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var searchQuery by remember { mutableStateOf("") }
@@ -110,8 +110,7 @@ fun EmployeeListScreen(
                                 EmployeeListItemCard(
                                     employee = employee,
                                     onClick = {
-                                        // TODO: Navigate to employee detail screen
-                                        Toast.makeText(context, "Clicked on ${employee.fullName}", Toast.LENGTH_SHORT).show()
+                                        onEmployeeClicked(employee.userId)
                                     }
                                 )
                             }

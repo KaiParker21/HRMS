@@ -3,11 +3,12 @@ package com.skye.hrms.ui.helpers
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Composition
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.skye.hrms.data.viewmodels.AuthViewModel
 import com.skye.hrms.ui.screens.ApplyLeaveScreen
 import com.skye.hrms.ui.screens.AttendanceScreen
@@ -20,6 +21,7 @@ import com.skye.hrms.ui.screens.SignupScreen
 import com.skye.hrms.ui.screens.SplashScreen
 import com.skye.hrms.ui.screens.VerificationScreen
 import com.skye.hrms.ui.screens.admin.AdminDashboardScreen
+import com.skye.hrms.ui.screens.admin.EmployeeDetailScreen
 import com.skye.hrms.ui.screens.admin.EmployeeListScreen
 import com.skye.hrms.ui.screens.admin.LeaveApprovalScreen
 
@@ -285,7 +287,24 @@ fun Navigation(
             EmployeeListScreen(
                 onBackClicked = {
                     navController.popBackStack()
+                },
+                onEmployeeClicked = { userId ->
+                    navController.navigate(Screens.EmployeeDetailScreen.createRoute(userId))
                 }
+            )
+        }
+
+        composable(
+            route = Screens.EmployeeDetailScreen.route,
+            enterTransition = ScreenTransitions.fadeScaleEnter,
+            exitTransition = ScreenTransitions.fadeScaleExit,
+            popEnterTransition = ScreenTransitions.fadeScalePopEnter,
+            popExitTransition = ScreenTransitions.fadeScalePopExit,
+            arguments = listOf(navArgument("userId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            EmployeeDetailScreen(
+                userId = backStackEntry.arguments?.getString("userId") ?: "",
+                onBackClicked = { navController.popBackStack() }
             )
         }
     }
