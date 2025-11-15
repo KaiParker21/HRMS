@@ -17,5 +17,6 @@ sealed class Screens(val route: String) {
     object EmployeeDetailScreen : Screens("employee_detail_screen/{userId}") {
         fun createRoute(userId: String) = "employee_detail_screen/$userId"
     }
+    object PayslipUploadScreen : Screens("payslip_upload_screen")
 
 }

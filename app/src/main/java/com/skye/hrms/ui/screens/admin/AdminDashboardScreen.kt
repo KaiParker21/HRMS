@@ -41,6 +41,8 @@ fun AdminDashboardScreen(
     viewModel: AdminDashboardViewModel = viewModel(),
     onNavigateToLeaveApprovals: () -> Unit,
     onNavigateToEmployeeList: () -> Unit,
+    onNavigateToPayslips: () -> Unit,
+    onNavigateToHolidays: () -> Unit,
     onSignOut: () -> Unit
 
 ) {
@@ -107,12 +109,8 @@ fun AdminDashboardScreen(
                 item {
                     QuickActionsAdmin(
                         onManageEmployees = onNavigateToEmployeeList,
-                        onUploadPayslips = {
-                            Toast.makeText(context, "Upload Payslips", Toast.LENGTH_SHORT).show()
-                        },
-                        onManageHolidays = {
-                            Toast.makeText(context, "Manage Holidays", Toast.LENGTH_SHORT).show()
-                        }
+                        onUploadPayslips = onNavigateToPayslips,
+                        onManageHolidays = onNavigateToHolidays
                     )
                 }
                 item {

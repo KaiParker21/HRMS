@@ -24,6 +24,7 @@ import com.skye.hrms.ui.screens.admin.AdminDashboardScreen
 import com.skye.hrms.ui.screens.admin.EmployeeDetailScreen
 import com.skye.hrms.ui.screens.admin.EmployeeListScreen
 import com.skye.hrms.ui.screens.admin.LeaveApprovalScreen
+import com.skye.hrms.ui.screens.admin.PayslipUploadScreen
 
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
@@ -259,7 +260,11 @@ fun Navigation(
                             inclusive = true
                         }
                     }
-                }
+                },
+                onNavigateToPayslips = {
+                    navController.navigate(Screens.PayslipUploadScreen.route)
+                },
+                onNavigateToHolidays = {}
             )
         }
 
@@ -305,6 +310,20 @@ fun Navigation(
             EmployeeDetailScreen(
                 userId = backStackEntry.arguments?.getString("userId") ?: "",
                 onBackClicked = { navController.popBackStack() }
+            )
+        }
+
+        composable(
+            route = Screens.PayslipUploadScreen.route,
+            enterTransition = ScreenTransitions.fadeScaleEnter,
+            exitTransition = ScreenTransitions.fadeScaleExit,
+            popEnterTransition = ScreenTransitions.fadeScalePopEnter,
+            popExitTransition = ScreenTransitions.fadeScalePopExit
+        ) {
+            PayslipUploadScreen(
+                onBackClicked = {
+                    navController.popBackStack()
+                }
             )
         }
     }
