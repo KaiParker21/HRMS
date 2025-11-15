@@ -99,7 +99,7 @@ fun VerificationScreen(
                         .height(50.dp)
                 ) {
                     if (isLoading) {
-                        CircularWavyProgressIndicator()
+                        LoadingIndicator()
                     } else {
                         Text("I've Verified My Email")
                     }

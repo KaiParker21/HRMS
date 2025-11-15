@@ -12,5 +12,7 @@ sealed class Screens(val route: String) {
     object PayslipScreen: Screens("payslip_screen")
     object MyDocumentsScreen: Screens("my_documents_screen")
     object AdminDashboardScreen: Screens("admin_dashboard_screen")
+    object LeaveApprovalScreen: Screens("leave_approval_screen")
+    object EmployeeListScreen: Screens("employee_list_screen")
 
 }

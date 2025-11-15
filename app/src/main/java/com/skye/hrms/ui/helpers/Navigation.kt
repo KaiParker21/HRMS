@@ -20,6 +20,8 @@ import com.skye.hrms.ui.screens.SignupScreen
 import com.skye.hrms.ui.screens.SplashScreen
 import com.skye.hrms.ui.screens.VerificationScreen
 import com.skye.hrms.ui.screens.admin.AdminDashboardScreen
+import com.skye.hrms.ui.screens.admin.EmployeeListScreen
+import com.skye.hrms.ui.screens.admin.LeaveApprovalScreen
 
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
@@ -240,7 +242,51 @@ fun Navigation(
             popEnterTransition = ScreenTransitions.fadeScalePopEnter,
             popExitTransition = ScreenTransitions.fadeScalePopExit
         ) {
-            AdminDashboardScreen()
+            AdminDashboardScreen(
+                navController = navController,
+                authViewModel = authViewModel,
+                onNavigateToEmployeeList = {
+                    navController.navigate(Screens.EmployeeListScreen.route)
+                },
+                onNavigateToLeaveApprovals = {
+                    navController.navigate(Screens.LeaveApprovalScreen.route)
+                },
+                onSignOut = {
+                    navController.navigate(Screens.SplashScreen.route) {
+                        popUpTo(Screens.DashboardScreen.route) {
+                            inclusive = true
+                        }
+                    }
+                }
+            )
+        }
+
+        composable(
+            route = Screens.LeaveApprovalScreen.route,
+            enterTransition = ScreenTransitions.fadeScaleEnter,
+            exitTransition = ScreenTransitions.fadeScaleExit,
+            popEnterTransition = ScreenTransitions.fadeScalePopEnter,
+            popExitTransition = ScreenTransitions.fadeScalePopExit
+        ) {
+            LeaveApprovalScreen(
+                onBackClicked = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = Screens.EmployeeListScreen.route,
+            enterTransition = ScreenTransitions.fadeScaleEnter,
+            exitTransition = ScreenTransitions.fadeScaleExit,
+            popEnterTransition = ScreenTransitions.fadeScalePopEnter,
+            popExitTransition = ScreenTransitions.fadeScalePopExit
+        ) {
+            EmployeeListScreen(
+                onBackClicked = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }
