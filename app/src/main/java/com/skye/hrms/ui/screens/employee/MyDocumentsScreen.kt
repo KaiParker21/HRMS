@@ -73,7 +73,7 @@ fun MyDocumentsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("My Documents", fontWeight = FontWeight.SemiBold) },
+                title = { Text("My Files", fontWeight = FontWeight.SemiBold) },
                 navigationIcon = {
                     IconButton(onClick = onBackClicked) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")

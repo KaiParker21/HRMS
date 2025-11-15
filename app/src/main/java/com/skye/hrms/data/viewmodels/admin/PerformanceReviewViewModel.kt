@@ -47,8 +47,12 @@ class PerformanceReviewViewModel : ViewModel() {
 
                 val employeeList = snapshot.documents.map { doc ->
                     // Get the review map, or use default values if it's missing
-                    val reviewMap = doc.get("performanceReview") as? Map<String, Float>
-                        ?: PerformanceMetrics.getDefaultMap()
+                    val rawReviewMap = doc.get("performanceReview") as? Map<String, Number>
+
+                    // 2. Safely convert each value to Float
+                    val reviewMap = rawReviewMap?.mapValues { entry ->
+                        entry.value.toFloat()
+                    } ?: PerformanceMetrics.getDefaultMap()
 
                     EmployeeReview(
                         userId = doc.id,

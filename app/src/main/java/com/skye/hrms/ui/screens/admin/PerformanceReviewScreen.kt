@@ -18,7 +18,7 @@ import com.skye.hrms.data.viewmodels.admin.PerformanceReviewViewModel
 import com.skye.hrms.ui.components.ColorfulRadarChart
 import com.skye.hrms.utilities.PerformanceMetrics
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun PerformanceReviewScreen(
     onBackClicked: () -> Unit,
@@ -47,7 +47,7 @@ fun PerformanceReviewScreen(
             contentAlignment = Alignment.Center
         ) {
             when {
-                uiState.isLoading -> CircularProgressIndicator()
+                uiState.isLoading -> CircularWavyProgressIndicator()
                 uiState.errorMessage != null -> Text(uiState.errorMessage!!, color = MaterialTheme.colorScheme.error)
                 else -> {
                     LazyColumn(

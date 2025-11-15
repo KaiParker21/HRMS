@@ -8,6 +8,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.skye.hrms.utilities.PerformanceMetrics
@@ -58,6 +59,8 @@ class DashboardViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(DashboardUiState())
     val uiState = _uiState.asStateFlow()
 
+    private var employeeListener: ListenerRegistration? = null
+
     private val holidayDateFormatter = SimpleDateFormat("dd MMM", Locale.getDefault())
 
     // (Helper functions: getTodayDateId, getTodayStartTimestamp)
@@ -71,7 +74,111 @@ class DashboardViewModel : ViewModel() {
     }
 
     init {
-        loadDashboardData()
+//        loadDashboardData()
+        startEmployeeDashboardListener()
+    }
+
+    // --- NEW FUNCTION ---
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun startEmployeeDashboardListener() {
+        _uiState.update { it.copy(isLoading = true) }
+        val userId = auth.currentUser?.uid
+
+        if (userId == null) {
+            _uiState.update { it.copy(isLoading = false, errorMessage = "User not logged in.") }
+            return
+        }
+
+        val employeeDocRef = db.collection("employees").document(userId)
+
+        // Attach a "live" listener
+        employeeListener = employeeDocRef.addSnapshotListener { snapshot, error ->
+
+            if (error != null) {
+                _uiState.update { it.copy(isLoading = false, errorMessage = error.message) }
+                return@addSnapshotListener
+            }
+
+            if (snapshot == null || !snapshot.exists()) {
+                _uiState.update { it.copy(isLoading = false, errorMessage = "Employee data not found.") }
+                return@addSnapshotListener
+            }
+
+            // Every time the employee document changes, this code block will run.
+            // We'll re-fetch everything to ensure the dashboard is in sync.
+            viewModelScope.launch {
+                try {
+                    // 1. Parse the (live) employee data
+                    val employeeName = snapshot.getString("fullName") ?: "Employee"
+                    val isClockedIn = snapshot.getBoolean("isClockedIn") ?: false
+                    val clockInTimestamp = snapshot.getTimestamp("lastClockInTime")
+                    val clockInTime = clockInTimestamp?.toLocalTime()
+
+                    // 2. Parse (live) Leave Balances
+                    val leaveBalancesList = mutableListOf<LeaveInfo>()
+                    val leavesData = snapshot.get("leaveBalances") as? List<HashMap<String, Any>> ?: emptyList()
+                    leavesData.forEach { leaveMap ->
+                        val balanceValue = leaveMap["balance"] as? Number
+                        val totalValue = leaveMap["total"] as? Number
+                        leaveBalancesList.add(
+                            LeaveInfo(
+                                type = leaveMap["type"] as? String ?: "",
+                                balance = balanceValue?.toFloat() ?: 0f,
+                                total = totalValue?.toFloat() ?: 0f
+                            )
+                        )
+                    }
+
+                    // 3. Parse (live) Performance Review
+                    val reviewMap = (snapshot.get("performanceReview") as? Map<String, Number>)
+                        ?.mapValues { it.value.toFloat() } ?: PerformanceMetrics.getDefaultMap()
+
+                    // 4. Fetch (non-live) Announcements
+                    val announcementsList = mutableListOf<String>()
+                    val announcementSnapshot = db.collection("announcements")
+                        .orderBy("createdAt", Query.Direction.DESCENDING)
+                        .limit(1)
+                        .get()
+                        .await()
+                    if (!announcementSnapshot.isEmpty) {
+                        announcementsList.add(
+                            announcementSnapshot.documents.first().getString("message") ?: ""
+                        )
+                    }
+
+                    // 5. Fetch (non-live) Holidays
+                    val holidayQuery = db.collection("holidays")
+                        .whereGreaterThan("date", Timestamp.now())
+                        .orderBy("date", Query.Direction.ASCENDING)
+                        .get()
+                        .await()
+                    val upcomingHolidaysList = holidayQuery.documents.map { doc ->
+                        val name = doc.getString("name") ?: "Holiday"
+                        val date = doc.getTimestamp("date")?.toDate()?.let {
+                            holidayDateFormatter.format(it)
+                        } ?: ""
+                        Holiday(name = name, date = date)
+                    }
+
+                    // 6. Update the complete UI state
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            employeeName = employeeName,
+                            isClockedIn = isClockedIn,
+                            clockInTime = clockInTime,
+                            leaveBalances = leaveBalancesList,
+                            announcements = announcementsList,
+                            upcomingHolidays = upcomingHolidaysList,
+                            performanceReview = reviewMap
+                        )
+                    }
+
+                } catch (e: Exception) {
+                    _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
+                }
+            }
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -229,5 +336,10 @@ class DashboardViewModel : ViewModel() {
         return Instant.ofEpochSecond(this.seconds)
             .atZone(ZoneId.systemDefault())
             .toLocalTime()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        employeeListener?.remove()
     }
 }

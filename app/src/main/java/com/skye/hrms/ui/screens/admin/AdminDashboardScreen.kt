@@ -1,5 +1,7 @@
 package com.skye.hrms.ui.screens.admin
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -23,8 +25,11 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.skye.hrms.data.viewmodels.common.AuthViewModel
 import com.skye.hrms.data.viewmodels.admin.AdminDashboardViewModel
+import com.skye.hrms.ui.components.ColorfulRadarChart
 import com.skye.hrms.ui.helpers.Screens
+import com.skye.hrms.utilities.PerformanceMetrics
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AdminDashboardScreen(
@@ -94,12 +99,6 @@ fun AdminDashboardScreen(
                     )
                 }
                 item {
-                    TeamStatsCard(
-                        totalEmployees = uiState.totalEmployees,
-                        onLeaveToday = uiState.onLeaveToday
-                    )
-                }
-                item {
                     QuickActionsAdmin(
                         onManageEmployees = onNavigateToEmployeeList,
                         onUploadPayslips = onNavigateToPayslips,
@@ -107,6 +106,20 @@ fun AdminDashboardScreen(
                         onPerformanceReview = onNavigateToPerformanceReview
                     )
                 }
+                if (uiState.averageReviewScores.isNotEmpty()) {
+                    item {
+                        CompanyPerformanceCard(
+                            reviewScores = uiState.averageReviewScores
+                        )
+                    }
+                }
+                item {
+                    TeamStatsCard(
+                        totalEmployees = uiState.totalEmployees,
+                        onLeaveToday = uiState.onLeaveToday
+                    )
+                }
+
                 item {
                     HolidayCard(
                         holidayName = uiState.nextHolidayName,
@@ -114,6 +127,29 @@ fun AdminDashboardScreen(
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun CompanyPerformanceCard(reviewScores: Map<String, Float>) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.large,
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = "Company-Wide Performance",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // --- UNCOMMENT YOUR CHART COMPOSABLE HERE ---
+             ColorfulRadarChart(
+                 labels = PerformanceMetrics.labels,
+                 values = reviewScores.values.toList()
+             )
         }
     }
 }
