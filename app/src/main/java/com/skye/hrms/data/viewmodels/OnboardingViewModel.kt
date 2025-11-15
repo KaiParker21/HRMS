@@ -50,11 +50,11 @@ data class OnboardingFormData(
     val isClockedIn: Boolean = false,
     val lastClockInTime: Timestamp? = null,
     val leaveBalances: List<Map<String, Any>> = listOf(
-        mapOf("type" to "Casual", "balance" to 12.0, "total" to 12.0),
-        mapOf("type" to "Sick", "balance" to 6.0, "total" to 6.0)
+        mapOf("type" to "Casual", "balance" to 6.0, "total" to 6.0),
+        mapOf("type" to "Sick", "balance" to 6.0, "total" to 6.0),
+        mapOf("type" to "Unpaid", "balance" to 6.0, "total" to 6.0)
     )
 )
-
 
 class OnboardingViewModel: ViewModel() {
 

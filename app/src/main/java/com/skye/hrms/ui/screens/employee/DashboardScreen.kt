@@ -107,7 +107,6 @@ fun DashboardScreen(
                 onMyDocumentsClicked
             ) }
             item { TimeOffInfoSection(
-                leaveBalances = uiState.leaveBalances,
                 upcomingHolidays = uiState.upcomingHolidays // <-- CHANGED
             ) }
             item { AnnouncementsSection(announcements = uiState.announcements) }
@@ -278,7 +277,6 @@ fun ActionCard(title: String, icon: ImageVector, backgroundColor: Color, onCardC
 // --- UPDATED COMPOSABLE ---
 @Composable
 fun TimeOffInfoSection(
-    leaveBalances: List<LeaveInfo>,
     upcomingHolidays: List<Holiday> // <-- CHANGED
 ) {
     Card(
@@ -288,23 +286,6 @@ fun TimeOffInfoSection(
         shape = MaterialTheme.shapes.large,
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text("Time Off", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-            Spacer(modifier = Modifier.height(16.dp))
-            // Leave Balances
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceAround
-            ) {
-                leaveBalances.forEach { leave ->
-                    LeaveBalanceIndicator(leave = leave)
-                }
-            }
-            HorizontalDivider(
-                modifier = Modifier.padding(vertical = 16.dp),
-                thickness = DividerDefaults.Thickness,
-                color = DividerDefaults.color
-            )
-
             // Upcoming Holidays Title
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
@@ -314,6 +295,7 @@ fun TimeOffInfoSection(
                     modifier = Modifier.size(32.dp)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
+
                 Text(
                     "Upcoming Holidays",
                     style = MaterialTheme.typography.titleMedium,
@@ -321,6 +303,11 @@ fun TimeOffInfoSection(
                 )
             }
             Spacer(modifier = Modifier.height(12.dp))
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 16.dp),
+                thickness = DividerDefaults.Thickness,
+                color = DividerDefaults.color
+            )
 
             // Holiday List
             if (upcomingHolidays.isEmpty()) {
@@ -369,23 +356,6 @@ private fun HolidayRowItem(holiday: Holiday) {
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.secondary
         )
-    }
-}
-
-@Composable
-fun LeaveBalanceIndicator(leave: LeaveInfo) {
-    Box(contentAlignment = Alignment.Center) {
-        CircularProgressIndicator(
-            progress = { leave.balance / leave.total },
-            modifier = Modifier.size(80.dp),
-            strokeWidth = 8.dp,
-            trackColor = MaterialTheme.colorScheme.surfaceContainer,
-            strokeCap = StrokeCap.Round
-        )
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("${leave.balance}", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.ExtraBold)
-            Text(leave.type, style = MaterialTheme.typography.labelMedium)
-        }
     }
 }
 

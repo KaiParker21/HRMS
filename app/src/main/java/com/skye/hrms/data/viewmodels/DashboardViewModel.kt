@@ -93,11 +93,14 @@ class DashboardViewModel : ViewModel() {
                 val leaveBalancesList = mutableListOf<LeaveInfo>()
                 val leavesData = employeeDoc.get("leaveBalances") as? List<HashMap<String, Any>> ?: emptyList()
                 leavesData.forEach { leaveMap ->
+                    val balanceValue = leaveMap["balance"] as? Number
+                    val totalValue = leaveMap["total"] as? Number
+
                     leaveBalancesList.add(
                         LeaveInfo(
                             type = leaveMap["type"] as? String ?: "",
-                            balance = (leaveMap["balance"] as? Double)?.toFloat() ?: 0f,
-                            total = (leaveMap["total"] as? Double)?.toFloat() ?: 0f
+                            balance = balanceValue?.toFloat() ?: 0f,
+                            total = totalValue?.toFloat() ?: 0f
                         )
                     )
                 }
