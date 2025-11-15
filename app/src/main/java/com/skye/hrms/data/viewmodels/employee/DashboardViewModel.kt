@@ -10,6 +10,7 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
+import com.skye.hrms.utilities.PerformanceMetrics
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -44,7 +45,8 @@ data class DashboardUiState(
     val announcements: List<String> = emptyList(),
     val team: List<TeamMember> = emptyList(),
     val isLoading: Boolean = true,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val performanceReview: Map<String, Float> = emptyMap()
 )
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -135,6 +137,9 @@ class DashboardViewModel : ViewModel() {
                 }
                 // --- END OF UPDATE ---
 
+                val reviewMap = employeeDoc.get("performanceReview") as? Map<String, Float>
+                    ?: PerformanceMetrics.getDefaultMap()
+
                 _uiState.update {
                     it.copy(
                         isLoading = false,
@@ -143,7 +148,8 @@ class DashboardViewModel : ViewModel() {
                         clockInTime = clockInTime,
                         leaveBalances = leaveBalancesList,
                         announcements = announcementsList,
-                        upcomingHolidays = upcomingHolidaysList // <-- UPDATED
+                        upcomingHolidays = upcomingHolidaysList,
+                        performanceReview = reviewMap
                     )
                 }
 

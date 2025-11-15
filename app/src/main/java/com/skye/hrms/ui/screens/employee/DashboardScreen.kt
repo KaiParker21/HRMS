@@ -1,6 +1,7 @@
 package com.skye.hrms.ui.screens.employee
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
@@ -59,6 +60,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.skye.hrms.data.viewmodels.common.AuthViewModel
 import com.skye.hrms.data.viewmodels.employee.DashboardViewModel
 import com.skye.hrms.data.viewmodels.employee.Holiday
+import com.skye.hrms.ui.components.ColorfulRadarChart
+import com.skye.hrms.utilities.PerformanceMetrics
 import kotlinx.coroutines.delay
 import java.time.Duration
 import java.time.LocalTime
@@ -103,10 +106,40 @@ fun DashboardScreen(
                 onPayslipClicked,
                 onMyDocumentsClicked
             ) }
+            if (uiState.performanceReview.isNotEmpty()) {
+                item {
+                    PerformanceChartCard(
+                        reviewScores = uiState.performanceReview
+                    )
+                }
+            } else {
+                Log.d("DashboardScreen", "No performance review data available")
+            }
             item { TimeOffInfoSection(
                 upcomingHolidays = uiState.upcomingHolidays // <-- CHANGED
             ) }
             item { AnnouncementsSection(announcements = uiState.announcements) }
+        }
+    }
+}
+
+@Composable
+fun PerformanceChartCard(reviewScores: Map<String, Float>) {
+    Card(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+        shape = MaterialTheme.shapes.large,
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = "Your Performance Review",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+             ColorfulRadarChart(
+                 labels = PerformanceMetrics.labels,
+                 values = reviewScores.values.toList()
+             )
         }
     }
 }
@@ -244,7 +277,7 @@ fun QuickActionsSection(
             item { ActionCard("Apply Leave", Icons.AutoMirrored.Outlined.EventNote, MaterialTheme.colorScheme.tertiaryContainer, onCardClicked = onApplyLeaveClicked) }
             item { ActionCard("View Payslip", Icons.Outlined.Payments, MaterialTheme.colorScheme.primaryContainer, onCardClicked = onPayslipClicked) }
             item { ActionCard("Attendance", Icons.Outlined.CoPresent, MaterialTheme.colorScheme.secondaryContainer, onCardClicked = onAttendanceClicked) }
-            item { ActionCard("My Documents", Icons.AutoMirrored.Outlined.Article, MaterialTheme.colorScheme.errorContainer, onCardClicked = onMyDocumentsClicked) }
+            item { ActionCard("My Files", Icons.AutoMirrored.Outlined.Article, MaterialTheme.colorScheme.errorContainer, onCardClicked = onMyDocumentsClicked) }
         }
     }
 }

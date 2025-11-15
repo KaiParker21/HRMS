@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp // <-- Import Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.skye.hrms.utilities.PerformanceMetrics
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -53,7 +54,9 @@ data class OnboardingFormData(
         mapOf("type" to "Casual", "balance" to 6.0, "total" to 6.0),
         mapOf("type" to "Sick", "balance" to 6.0, "total" to 6.0),
         mapOf("type" to "Unpaid", "balance" to 6.0, "total" to 6.0)
-    )
+    ),
+
+    val performanceReview: Map<String, Float> = PerformanceMetrics.getDefaultMap()
 )
 
 class OnboardingViewModel: ViewModel() {

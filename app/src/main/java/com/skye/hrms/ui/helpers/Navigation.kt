@@ -26,6 +26,7 @@ import com.skye.hrms.ui.screens.admin.EmployeeListScreen
 import com.skye.hrms.ui.screens.admin.HolidayScreen
 import com.skye.hrms.ui.screens.admin.LeaveApprovalScreen
 import com.skye.hrms.ui.screens.admin.PayslipUploadScreen
+import com.skye.hrms.ui.screens.admin.PerformanceReviewScreen
 
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
@@ -267,6 +268,9 @@ fun Navigation(
                 },
                 onNavigateToHolidays = {
                     navController.navigate(Screens.ManageHolidaysScreen.route)
+                },
+                onNavigateToPerformanceReview = {
+                    navController.navigate(Screens.PerformanceReviewScreen.route)
                 }
             )
         }
@@ -338,6 +342,20 @@ fun Navigation(
             popExitTransition = ScreenTransitions.fadeScalePopExit
         ) {
             HolidayScreen(
+                onBackClicked = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = Screens.PerformanceReviewScreen.route,
+            enterTransition = ScreenTransitions.fadeScaleEnter,
+            exitTransition = ScreenTransitions.fadeScaleExit,
+            popEnterTransition = ScreenTransitions.fadeScalePopEnter,
+            popExitTransition = ScreenTransitions.fadeScalePopExit
+        ) {
+            PerformanceReviewScreen(
                 onBackClicked = {
                     navController.popBackStack()
                 }

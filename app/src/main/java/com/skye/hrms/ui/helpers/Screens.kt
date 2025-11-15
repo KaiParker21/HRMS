@@ -19,5 +19,6 @@ sealed class Screens(val route: String) {
     }
     object PayslipUploadScreen : Screens("payslip_upload_screen")
     object ManageHolidaysScreen : Screens("manage_holidays_screen")
+    object PerformanceReviewScreen : Screens("performance_review_screen")
 
 }

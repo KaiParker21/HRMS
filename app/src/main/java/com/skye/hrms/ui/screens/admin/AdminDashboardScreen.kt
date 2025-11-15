@@ -35,7 +35,8 @@ fun AdminDashboardScreen(
     onNavigateToEmployeeList: () -> Unit,
     onNavigateToPayslips: () -> Unit,
     onNavigateToHolidays: () -> Unit,
-    onSignOut: () -> Unit
+    onSignOut: () -> Unit,
+    onNavigateToPerformanceReview: () -> Unit
 
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -102,7 +103,8 @@ fun AdminDashboardScreen(
                     QuickActionsAdmin(
                         onManageEmployees = onNavigateToEmployeeList,
                         onUploadPayslips = onNavigateToPayslips,
-                        onManageHolidays = onNavigateToHolidays
+                        onManageHolidays = onNavigateToHolidays,
+                        onPerformanceReview = onNavigateToPerformanceReview
                     )
                 }
                 item {
@@ -196,7 +198,8 @@ fun StatItem(label: String, count: String, modifier: Modifier = Modifier) {
 fun QuickActionsAdmin(
     onManageEmployees: () -> Unit,
     onUploadPayslips: () -> Unit,
-    onManageHolidays: () -> Unit
+    onManageHolidays: () -> Unit,
+    onPerformanceReview: () -> Unit
 ) {
     Column {
         Text(
@@ -230,6 +233,14 @@ fun QuickActionsAdmin(
                     icon = Icons.Outlined.EditCalendar,
                     color = MaterialTheme.colorScheme.secondaryContainer,
                     onClick = onManageHolidays
+                )
+            }
+            item {
+                AdminActionCard(
+                    title = "Performance Review",
+                    icon = Icons.Outlined.BarChart,
+                    color = MaterialTheme.colorScheme.errorContainer,
+                    onClick = onPerformanceReview
                 )
             }
         }
