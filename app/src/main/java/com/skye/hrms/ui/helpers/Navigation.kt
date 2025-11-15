@@ -23,6 +23,7 @@ import com.skye.hrms.ui.screens.VerificationScreen
 import com.skye.hrms.ui.screens.admin.AdminDashboardScreen
 import com.skye.hrms.ui.screens.admin.EmployeeDetailScreen
 import com.skye.hrms.ui.screens.admin.EmployeeListScreen
+import com.skye.hrms.ui.screens.admin.HolidayScreen
 import com.skye.hrms.ui.screens.admin.LeaveApprovalScreen
 import com.skye.hrms.ui.screens.admin.PayslipUploadScreen
 
@@ -264,7 +265,9 @@ fun Navigation(
                 onNavigateToPayslips = {
                     navController.navigate(Screens.PayslipUploadScreen.route)
                 },
-                onNavigateToHolidays = {}
+                onNavigateToHolidays = {
+                    navController.navigate(Screens.ManageHolidaysScreen.route)
+                }
             )
         }
 
@@ -321,6 +324,20 @@ fun Navigation(
             popExitTransition = ScreenTransitions.fadeScalePopExit
         ) {
             PayslipUploadScreen(
+                onBackClicked = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = Screens.ManageHolidaysScreen.route,
+            enterTransition = ScreenTransitions.fadeScaleEnter,
+            exitTransition = ScreenTransitions.fadeScaleExit,
+            popEnterTransition = ScreenTransitions.fadeScalePopEnter,
+            popExitTransition = ScreenTransitions.fadeScalePopExit
+        ) {
+            HolidayScreen(
                 onBackClicked = {
                     navController.popBackStack()
                 }
