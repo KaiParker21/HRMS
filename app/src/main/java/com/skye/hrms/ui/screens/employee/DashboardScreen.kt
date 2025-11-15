@@ -33,7 +33,6 @@ import androidx.compose.material.icons.outlined.CoPresent
 import androidx.compose.material.icons.outlined.Payments
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
@@ -53,15 +52,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.skye.hrms.data.viewmodels.AuthViewModel
-import com.skye.hrms.data.viewmodels.DashboardViewModel
-import com.skye.hrms.data.viewmodels.Holiday
-import com.skye.hrms.data.viewmodels.LeaveInfo
+import com.skye.hrms.data.viewmodels.common.AuthViewModel
+import com.skye.hrms.data.viewmodels.employee.DashboardViewModel
+import com.skye.hrms.data.viewmodels.employee.Holiday
 import kotlinx.coroutines.delay
 import java.time.Duration
 import java.time.LocalTime

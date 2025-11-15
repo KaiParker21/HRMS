@@ -29,10 +29,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.skye.hrms.data.viewmodels.EducationItem
-import com.skye.hrms.data.viewmodels.OnboardingFormData
-import com.skye.hrms.data.viewmodels.OnboardingViewModel
-import com.skye.hrms.data.viewmodels.SubmissionState
+import com.skye.hrms.data.viewmodels.common.EducationItem
+import com.skye.hrms.data.viewmodels.common.OnboardingFormData
+import com.skye.hrms.data.viewmodels.common.OnboardingViewModel
+import com.skye.hrms.data.viewmodels.common.SubmissionState
 import java.text.SimpleDateFormat
 import java.util.*
 

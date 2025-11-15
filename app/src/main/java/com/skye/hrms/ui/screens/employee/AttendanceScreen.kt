@@ -16,8 +16,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.skye.hrms.data.viewmodels.AttendanceRecord
-import com.skye.hrms.data.viewmodels.AttendanceViewModel
+import com.skye.hrms.data.viewmodels.employee.AttendanceRecord
+import com.skye.hrms.data.viewmodels.employee.AttendanceViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable

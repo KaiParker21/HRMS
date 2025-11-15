@@ -7,7 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
-import com.skye.hrms.data.viewmodels.AuthViewModel
+import com.skye.hrms.data.viewmodels.common.AuthViewModel
 import com.skye.hrms.ui.helpers.Navigation
 import com.skye.hrms.ui.themes.HRMSTheme
 

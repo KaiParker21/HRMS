@@ -9,7 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.skye.hrms.data.viewmodels.AuthViewModel
+import com.skye.hrms.data.viewmodels.common.AuthViewModel
 import com.skye.hrms.ui.screens.employee.ApplyLeaveScreen
 import com.skye.hrms.ui.screens.employee.AttendanceScreen
 import com.skye.hrms.ui.screens.employee.DashboardScreen

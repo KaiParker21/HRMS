@@ -22,8 +22,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.skye.hrms.data.viewmodels.PayslipInfo
-import com.skye.hrms.data.viewmodels.ViewPayslipViewModel
+import com.skye.hrms.data.viewmodels.employee.PayslipInfo
+import com.skye.hrms.data.viewmodels.employee.ViewPayslipViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable

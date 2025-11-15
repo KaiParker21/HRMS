@@ -39,8 +39,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.skye.hrms.data.viewmodels.AuthState
-import com.skye.hrms.data.viewmodels.AuthViewModel
+import com.skye.hrms.data.viewmodels.common.AuthState
+import com.skye.hrms.data.viewmodels.common.AuthViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 

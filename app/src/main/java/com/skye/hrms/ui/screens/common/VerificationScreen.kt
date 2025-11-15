@@ -12,8 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.skye.hrms.data.viewmodels.AuthViewModel
-import com.skye.hrms.data.viewmodels.VerificationState
+import com.skye.hrms.data.viewmodels.common.AuthViewModel
+import com.skye.hrms.data.viewmodels.common.VerificationState
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable

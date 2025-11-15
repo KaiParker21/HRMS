@@ -1,4 +1,4 @@
-package com.skye.hrms.data.viewmodels
+package com.skye.hrms.data.viewmodels.common
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

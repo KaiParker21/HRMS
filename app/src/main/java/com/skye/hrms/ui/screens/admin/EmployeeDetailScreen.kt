@@ -16,11 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.skye.hrms.data.viewmodels.EducationItem
-import com.skye.hrms.data.viewmodels.OnboardingFormData
+import com.skye.hrms.data.viewmodels.common.EducationItem
+import com.skye.hrms.data.viewmodels.common.OnboardingFormData
 import com.skye.hrms.data.viewmodels.admin.EmployeeDetailViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)

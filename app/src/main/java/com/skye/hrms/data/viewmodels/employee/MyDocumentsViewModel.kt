@@ -1,4 +1,4 @@
-package com.skye.hrms.data.viewmodels
+package com.skye.hrms.data.viewmodels.employee
 
 import android.content.Context
 import android.net.Uri
@@ -13,7 +13,6 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.text.SimpleDateFormat

@@ -19,7 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.skye.hrms.data.viewmodels.SubmissionState
+import com.skye.hrms.data.viewmodels.common.SubmissionState
 import com.skye.hrms.data.viewmodels.admin.HolidayItem
 import com.skye.hrms.data.viewmodels.admin.HolidayViewModel
 import java.text.SimpleDateFormat

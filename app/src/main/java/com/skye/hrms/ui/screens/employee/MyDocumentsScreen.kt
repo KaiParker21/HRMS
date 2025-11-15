@@ -29,10 +29,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.skye.hrms.data.viewmodels.DocumentInfo
-import com.skye.hrms.data.viewmodels.DocumentUiState
-import com.skye.hrms.data.viewmodels.MyDocumentsViewModel
-import com.skye.hrms.data.viewmodels.UploadState
+import com.skye.hrms.data.viewmodels.employee.DocumentInfo
+import com.skye.hrms.data.viewmodels.employee.DocumentUiState
+import com.skye.hrms.data.viewmodels.employee.MyDocumentsViewModel
+import com.skye.hrms.data.viewmodels.employee.UploadState
 import com.skye.hrms.ui.components.DocumentFabMenu
 import com.skye.hrms.ui.themes.HRMSTheme
 

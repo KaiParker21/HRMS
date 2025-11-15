@@ -4,7 +4,7 @@ package com.skye.hrms.data.viewmodels.admin
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FirebaseFirestore
-import com.skye.hrms.data.viewmodels.OnboardingFormData
+import com.skye.hrms.data.viewmodels.common.OnboardingFormData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update

@@ -23,7 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.skye.hrms.data.viewmodels.SubmissionState
+import com.skye.hrms.data.viewmodels.common.SubmissionState
 import com.skye.hrms.data.viewmodels.admin.EmployeeListItem
 import com.skye.hrms.data.viewmodels.admin.PayslipUploadViewModel
 import java.util.Calendar

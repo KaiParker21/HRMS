@@ -1,4 +1,4 @@
-package com.skye.hrms.data.viewmodels
+package com.skye.hrms.data.viewmodels.employee
 
 import android.os.Build
 import androidx.annotation.RequiresApi
