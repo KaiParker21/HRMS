@@ -14,12 +14,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Login
 import androidx.compose.material.icons.automirrored.filled.Logout
@@ -57,6 +60,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.skye.hrms.data.viewmodels.AuthViewModel
 import com.skye.hrms.data.viewmodels.DashboardViewModel
+import com.skye.hrms.data.viewmodels.Holiday
 import com.skye.hrms.data.viewmodels.LeaveInfo
 import kotlinx.coroutines.delay
 import java.time.Duration
@@ -104,8 +108,7 @@ fun DashboardScreen(
             ) }
             item { TimeOffInfoSection(
                 leaveBalances = uiState.leaveBalances,
-                holidayName = uiState.nextHoliday,
-                holidayDate = uiState.nextHolidayDate
+                upcomingHolidays = uiState.upcomingHolidays // <-- CHANGED
             ) }
             item { AnnouncementsSection(announcements = uiState.announcements) }
         }
@@ -117,6 +120,8 @@ fun GreetingHeader(
     name: String,
     onSignOutClicked: () -> Unit
 ) {
+    val greeting = remember { getGreeting() }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -126,7 +131,7 @@ fun GreetingHeader(
     ) {
         Column {
             Text(
-                text = "Good morning,",
+                text = greeting,
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -269,15 +274,22 @@ fun ActionCard(title: String, icon: ImageVector, backgroundColor: Color, onCardC
 }
 
 
+// --- UPDATED COMPOSABLE ---
 @Composable
-fun TimeOffInfoSection(leaveBalances: List<LeaveInfo>, holidayName: String, holidayDate: String) {
+fun TimeOffInfoSection(
+    leaveBalances: List<LeaveInfo>,
+    upcomingHolidays: List<Holiday> // <-- CHANGED
+) {
     Card(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
         shape = MaterialTheme.shapes.large,
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text("Time Off", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
             Spacer(modifier = Modifier.height(16.dp))
+            // Leave Balances
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround
@@ -291,22 +303,71 @@ fun TimeOffInfoSection(leaveBalances: List<LeaveInfo>, holidayName: String, holi
                 thickness = DividerDefaults.Thickness,
                 color = DividerDefaults.color
             )
+
+            // Upcoming Holidays Title
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.Outlined.CalendarMonth,
-                    contentDescription = "Next Holiday",
+                    contentDescription = "Upcoming Holidays",
                     tint = MaterialTheme.colorScheme.secondary,
                     modifier = Modifier.size(32.dp)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
-                Column {
-                    Text("Next Holiday", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Text(holidayName, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
+                Text(
+                    "Upcoming Holidays",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Holiday List
+            if (upcomingHolidays.isEmpty()) {
+                Text(
+                    text = "No upcoming holidays have been set yet.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            } else {
+                // This Column is scrollable and has a max height
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 180.dp) // <-- Constrained height
+                        .verticalScroll(rememberScrollState()), // <-- Scrollable
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    upcomingHolidays.forEach { holiday ->
+                        HolidayRowItem(holiday = holiday)
+                    }
                 }
-                Spacer(modifier = Modifier.weight(1f))
-                Text(holidayDate, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary)
             }
         }
+    }
+}
+
+// --- NEW HELPER COMPOSABLE ---
+@Composable
+private fun HolidayRowItem(holiday: Holiday) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = holiday.name,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Bold
+            )
+        }
+        Text(
+            text = holiday.date,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.secondary
+        )
     }
 }
 
@@ -349,5 +410,14 @@ fun AnnouncementsSection(announcements: List<String>) {
                 )
             }
         }
+    }
+}
+
+private fun getGreeting(): String {
+    val currentHour = LocalTime.now().hour
+    return when (currentHour) {
+        in 0..11 -> "Good morning,"   // Before 12 PM
+        in 12..16 -> "Good afternoon," // 12 PM to 5 PM
+        else -> "Good evening,"      // After 5 PM
     }
 }

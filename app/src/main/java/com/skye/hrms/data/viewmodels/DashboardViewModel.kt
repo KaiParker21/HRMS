@@ -15,23 +15,32 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Date
+import java.util.Locale
 
 data class LeaveInfo(val type: String, val balance: Float, val total: Float)
 data class TeamMember(val name: String, val avatarUrl: String)
 
+// --- NEW DATA CLASS ---
+// A simple data class to hold holiday info
+data class Holiday(
+    val name: String,
+    val date: String
+)
+
+// --- UPDATED UiState ---
 data class DashboardUiState(
     val employeeName: String = "",
     val isClockedIn: Boolean = false,
     val clockInTime: LocalTime? = null,
     val leaveBalances: List<LeaveInfo> = emptyList(),
-    val nextHoliday: String = "Independence Day",
-    val nextHolidayDate: String = "15 August",
+    val upcomingHolidays: List<Holiday> = emptyList(), // <-- CHANGED
     val announcements: List<String> = emptyList(),
     val team: List<TeamMember> = emptyList(),
     val isLoading: Boolean = true,
@@ -47,10 +56,13 @@ class DashboardViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(DashboardUiState())
     val uiState = _uiState.asStateFlow()
 
+    private val holidayDateFormatter = SimpleDateFormat("dd MMM", Locale.getDefault())
+
+    // (Helper functions: getTodayDateId, getTodayStartTimestamp)
+    // ...
     private fun getTodayDateId(): String {
         return LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
     }
-
     private fun getTodayStartTimestamp(): Timestamp {
         val startOfToday = LocalDate.now().atStartOfDay(ZoneId.systemDefault())
         return Timestamp(Date.from(startOfToday.toInstant()))
@@ -72,12 +84,12 @@ class DashboardViewModel : ViewModel() {
 
         viewModelScope.launch {
             try {
+                // (Employee fetch logic remains the same)
                 val employeeDoc = db.collection("employees").document(userId).get().await()
                 val employeeName = employeeDoc.getString("fullName") ?: "Employee"
                 val isClockedIn = employeeDoc.getBoolean("isClockedIn") ?: false
                 val clockInTimestamp = employeeDoc.getTimestamp("lastClockInTime")
                 val clockInTime = clockInTimestamp?.toLocalTime()
-
                 val leaveBalancesList = mutableListOf<LeaveInfo>()
                 val leavesData = employeeDoc.get("leaveBalances") as? List<HashMap<String, Any>> ?: emptyList()
                 leavesData.forEach { leaveMap ->
@@ -90,6 +102,7 @@ class DashboardViewModel : ViewModel() {
                     )
                 }
 
+                // (Announcements fetch logic remains the same)
                 val announcementsList = mutableListOf<String>()
                 val announcementSnapshot = db.collection("announcements")
                     .orderBy("createdAt", Query.Direction.DESCENDING)
@@ -102,6 +115,23 @@ class DashboardViewModel : ViewModel() {
                     )
                 }
 
+                // --- UPDATED HOLIDAY FETCH LOGIC ---
+                val holidayQuery = db.collection("holidays")
+                    .whereGreaterThan("date", Timestamp.now())
+                    .orderBy("date", Query.Direction.ASCENDING)
+                    // .limit(1) <-- REMOVED THIS LINE to get all upcoming holidays
+                    .get()
+                    .await()
+
+                val upcomingHolidaysList = holidayQuery.documents.map { doc ->
+                    val name = doc.getString("name") ?: "Holiday"
+                    val date = doc.getTimestamp("date")?.toDate()?.let {
+                        holidayDateFormatter.format(it)
+                    } ?: ""
+                    Holiday(name = name, date = date)
+                }
+                // --- END OF UPDATE ---
+
                 _uiState.update {
                     it.copy(
                         isLoading = false,
@@ -109,7 +139,8 @@ class DashboardViewModel : ViewModel() {
                         isClockedIn = isClockedIn,
                         clockInTime = clockInTime,
                         leaveBalances = leaveBalancesList,
-                        announcements = announcementsList
+                        announcements = announcementsList,
+                        upcomingHolidays = upcomingHolidaysList // <-- UPDATED
                     )
                 }
 
@@ -119,6 +150,8 @@ class DashboardViewModel : ViewModel() {
         }
     }
 
+    // (toggleClockIn function remains the same)
+    // ...
     fun toggleClockIn() {
         val userId = auth.currentUser?.uid ?: return
         val currentUiState = _uiState.value
@@ -131,8 +164,8 @@ class DashboardViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 if (newClockInStatus) {
+                    // --- CLOCKING IN ---
                     val now = FieldValue.serverTimestamp()
-
                     val attendanceData = hashMapOf(
                         "date" to getTodayStartTimestamp(),
                         "clockInTime" to now,
@@ -141,21 +174,18 @@ class DashboardViewModel : ViewModel() {
                         "totalHours" to 0.0
                     )
                     attendanceDocRef.set(attendanceData, SetOptions.merge()).await()
-
                     employeeRef.update(
                         "isClockedIn", true,
                         "lastClockInTime", now
                     ).await()
-
                     _uiState.update {
                         it.copy(isClockedIn = true, clockInTime = LocalTime.now())
                     }
                 } else {
+                    // --- CLOCKING OUT ---
                     val clockOutTimestamp = FieldValue.serverTimestamp()
-
                     val employeeDoc = employeeRef.get().await()
                     val clockInTimestamp = employeeDoc.getTimestamp("lastClockInTime")
-
                     var status = "Present"
                     var totalHours = 0.0
 
@@ -164,7 +194,6 @@ class DashboardViewModel : ViewModel() {
                         val clockOutTime = Date().time
                         val diffMillis = clockOutTime - clockInTime
                         totalHours = (diffMillis.toDouble() / (1000 * 60 * 60))
-
                         status = when {
                             totalHours >= 8 -> "Present"
                             totalHours >= 4 -> "Half-day"
@@ -177,9 +206,7 @@ class DashboardViewModel : ViewModel() {
                         "status", status,
                         "totalHours", totalHours
                     ).await()
-
                     employeeRef.update("isClockedIn", false).await()
-
                     _uiState.update { it.copy(isClockedIn = false, clockInTime = null) }
                 }
             } catch (e: Exception) {
