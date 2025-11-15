@@ -1,4 +1,4 @@
-package com.skye.hrms.ui.screens
+package com.skye.hrms.ui.screens.common
 
 import android.app.DatePickerDialog
 import androidx.compose.animation.*

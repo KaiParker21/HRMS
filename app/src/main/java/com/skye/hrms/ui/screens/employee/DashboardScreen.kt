@@ -1,4 +1,4 @@
-package com.skye.hrms.ui.screens
+package com.skye.hrms.ui.screens.employee
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -115,6 +115,7 @@ fun DashboardScreen(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun GreetingHeader(
     name: String,
@@ -413,6 +414,7 @@ fun AnnouncementsSection(announcements: List<String>) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 private fun getGreeting(): String {
     val currentHour = LocalTime.now().hour
     return when (currentHour) {

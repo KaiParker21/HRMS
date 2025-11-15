@@ -1,4 +1,4 @@
-package com.skye.hrms.ui.screens
+package com.skye.hrms.ui.screens.common
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
@@ -41,8 +41,6 @@ import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton

@@ -1,4 +1,4 @@
-package com.skye.hrms.ui.screens
+package com.skye.hrms.ui.screens.common
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
