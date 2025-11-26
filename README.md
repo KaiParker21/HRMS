@@ -57,3 +57,38 @@ com.company.hrms
 ├── model/        # Kotlin data classes & Firestore document schemas
 ├── auth/         # Authentication wrapper classes & session management
 └── utils/        # Extension functions, date formatters & utilities
+```
+## 📸 Screenshots
+
+### **Login & Authentication**
+![Login](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_195618_HRMS.jpg)
+![Login 2](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_195642_HRMS.jpg)
+
+### **Dashboard**
+![Dashboard](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_195706_HRMS.jpg)
+![Dashboard 2](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_195713_HRMS.jpg)
+![Dashboard 3](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_195723_HRMS.jpg)
+![Dashboard 4](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_195728_HRMS.jpg)
+
+### **Profile / Employee**
+![Profile](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_195818_HRMS.jpg)
+![Profile 2](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_195829_HRMS.jpg)
+
+### **Attendance**
+![Attendance](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_195836_HRMS.jpg)
+![Attendance 2](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_195843_HRMS.jpg)
+![Attendance 3](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_195850_HRMS.jpg)
+![Attendance 4](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_195856_HRMS.jpg)
+
+### **Leave Management**
+![Leave](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_195904_HRMS.jpg)
+![Leave 2](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_195926_HRMS.jpg)
+![Leave 3](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_195949_HRMS.jpg)
+
+### **Admin / Other Screens**
+![Admin](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_200014_HRMS.jpg)
+![Admin 2](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_200023_HRMS.jpg)
+![Admin 3](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_200027_HRMS.jpg)
+![Admin 4](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_200112_HRMS.jpg)
+
+
