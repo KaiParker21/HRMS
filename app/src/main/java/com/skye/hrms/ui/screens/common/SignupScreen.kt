@@ -1,5 +1,6 @@
-package com.skye.hrms.ui.screens
+package com.skye.hrms.ui.screens.common
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
@@ -9,7 +10,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
@@ -22,8 +22,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Lock
-import androidx.compose.material.icons.outlined.PersonOutline
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -38,26 +38,26 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import com.skye.hrms.data.viewmodels.AuthState
-import com.skye.hrms.data.viewmodels.AuthViewModel
+import com.skye.hrms.data.viewmodels.common.AuthState
+import com.skye.hrms.data.viewmodels.common.AuthViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun LoginScreen(
+fun SignupScreen(
     authViewModel: AuthViewModel,
-    onNavigateToSignup: () -> Unit,
-    onLoginSuccess: () -> Unit,
+    onNavigateToLogin: () -> Unit,
+    onSignupSuccess: () -> Unit,
 ) {
     val authState by authViewModel.authState.observeAsState()
-    val snackbarHostState = remember { SnackbarHostState() }
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
     val focusManager = LocalFocusManager.current
 
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
@@ -72,10 +72,10 @@ fun LoginScreen(
     LaunchedEffect(authState) {
         when (val state = authState) {
             is AuthState.Success -> {
-                onLoginSuccess()
+                onSignupSuccess()
             }
             is AuthState.Error -> {
-                snackbarHostState.showSnackbar(message = state.message)
+                errorMessage = state.message
                 authViewModel.resetAuthState()
             }
             else -> Unit
@@ -83,14 +83,25 @@ fun LoginScreen(
     }
 
     val isLoading = authState is AuthState.Loading
+    val isError = errorMessage != null
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) }
-    ) { paddingValues ->
+    val handleSignUp = {
+        focusManager.clearFocus()
+        if (password != confirmPassword) {
+            errorMessage = "Passwords do not match."
+        } else {
+            authViewModel.signUpWithEmailAndPassword(
+                email = email.trim(),
+                password = password
+            )
+        }
+    }
+
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+    Scaffold { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(
@@ -131,25 +142,25 @@ fun LoginScreen(
                         Box(
                             modifier = Modifier
                                 .size(120.dp)
-                                .clip(RoundedCornerShape(30.dp, 30.dp, 50.dp, 10.dp))
+                                .clip(RoundedCornerShape(50.dp, 10.dp, 30.dp, 30.dp))
                                 .background(
                                     Brush.linearGradient(
                                         colors = listOf(
-                                            MaterialTheme.colorScheme.primary,
-                                            MaterialTheme.colorScheme.tertiary
+                                            MaterialTheme.colorScheme.secondary,
+                                            MaterialTheme.colorScheme.primary
                                         )
                                     )
                                 )
                         )
                         Spacer(modifier = Modifier.height(24.dp))
                         Text(
-                            text = "Welcome Back!",
+                            text = "Create Account",
                             style = MaterialTheme.typography.displaySmall,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Log in to continue your journey.",
+                            text = "Start your adventure with us.",
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center
@@ -170,28 +181,32 @@ fun LoginScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.bringIntoViewRequester(bringIntoViewRequester)
                     ) {
+
                         OutlinedTextField(
                             value = email,
-                            onValueChange = { email = it },
+                            onValueChange = {
+                                email = it
+                                errorMessage = null
+                            },
                             enabled = !isLoading,
+                            isError = isError,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .onFocusEvent { event ->
                                     if (event.isFocused) {
-                                        coroutineScope.launch {
-                                            bringIntoViewRequester.bringIntoView()
-                                        }
+                                        coroutineScope.launch { bringIntoViewRequester.bringIntoView() }
                                     }
                                 },
-                            label = { Text("Username") },
+                            label = { Text("Email") },
                             leadingIcon = {
                                 Icon(
-                                    imageVector = Icons.Outlined.PersonOutline,
-                                    contentDescription = "Username Icon"
+                                    imageVector = Icons.Outlined.Email,
+                                    contentDescription = "Email Icon"
                                 )
                             },
                             shape = RoundedCornerShape(16.dp),
                             keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Email,
                                 imeAction = ImeAction.Next
                             ),
                             singleLine = true
@@ -201,15 +216,17 @@ fun LoginScreen(
 
                         OutlinedTextField(
                             value = password,
-                            onValueChange = { password = it },
+                            onValueChange = {
+                                password = it
+                                errorMessage = null
+                            },
                             enabled = !isLoading,
+                            isError = isError,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .onFocusEvent { event ->
                                     if (event.isFocused) {
-                                        coroutineScope.launch {
-                                            bringIntoViewRequester.bringIntoView()
-                                        }
+                                        coroutineScope.launch { bringIntoViewRequester.bringIntoView() }
                                     }
                                 },
                             label = { Text("Password") },
@@ -231,30 +248,58 @@ fun LoginScreen(
                             shape = RoundedCornerShape(16.dp),
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Password,
-                                imeAction = ImeAction.Done
-                            ),
-                            keyboardActions = KeyboardActions(
-                                onDone = {
-                                    focusManager.clearFocus()
-                                    authViewModel.signInWithEmailAndPassword(
-                                        email = email.trim(),
-                                        password = password
-                                    )
-                                }
+                                imeAction = ImeAction.Next
                             ),
                             singleLine = true
                         )
 
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        OutlinedTextField(
+                            value = confirmPassword,
+                            onValueChange = {
+                                confirmPassword = it
+                                errorMessage = null
+                            },
+                            enabled = !isLoading,
+                            isError = isError,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .onFocusEvent { event ->
+                                    if (event.isFocused) {
+                                        coroutineScope.launch { bringIntoViewRequester.bringIntoView() }
+                                    }
+                                },
+                            label = { Text("Confirm Password") },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Outlined.Lock,
+                                    contentDescription = "Confirm Password Icon"
+                                )
+                            },
+                            visualTransformation = PasswordVisualTransformation(),
+                            shape = RoundedCornerShape(16.dp),
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Password,
+                                imeAction = ImeAction.Done
+                            ),
+                            keyboardActions = KeyboardActions(onDone = { handleSignUp() }),
+                            singleLine = true
+                        )
+
+                        AnimatedVisibility(visible = isError) {
+                            Text(
+                                text = errorMessage ?: "",
+                                color = MaterialTheme.colorScheme.error,
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.padding(top = 8.dp)
+                            )
+                        }
+
                         Spacer(modifier = Modifier.height(24.dp))
 
                         Button(
-                            onClick = {
-                                authViewModel.signInWithEmailAndPassword(
-                                    email = email.trim(),
-                                    password = password
-                                )
-                                focusManager.clearFocus()
-                            },
+                            onClick = { handleSignUp() },
                             enabled = !isLoading,
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -266,30 +311,16 @@ fun LoginScreen(
                             )
                         ) {
                             if (isLoading) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(24.dp),
-                                    color = MaterialTheme.colorScheme.onPrimary
-                                )
+                                LoadingIndicator()
                             } else {
-                                Text(text = "Login", style = MaterialTheme.typography.titleMedium)
+                                Text(text = "Sign Up", style = MaterialTheme.typography.titleMedium)
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                                    contentDescription = "Login Arrow"
+                                    contentDescription = "Sign Up Arrow"
                                 )
                             }
                         }
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Text(
-                            text = "Forgot Password?",
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.clickable { /* TODO: Handle forgot password */ },
-                            style = MaterialTheme.typography.bodyMedium.copy(
-                                textDecoration = TextDecoration.Underline
-                            )
-                        )
                     }
                 }
 
@@ -307,13 +338,13 @@ fun LoginScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            "Don't have an account?",
+                            "Already have an account?",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(modifier = Modifier.width(4.dp))
-                        TextButton(onClick = onNavigateToSignup, enabled = !isLoading) {
-                            Text("Sign Up", color = MaterialTheme.colorScheme.primary)
+                        TextButton(onClick = onNavigateToLogin, enabled = !isLoading) {
+                            Text("Log In", color = MaterialTheme.colorScheme.primary)
                         }
                     }
                 }

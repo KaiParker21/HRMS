@@ -1,18 +1,34 @@
 package com.skye.hrms.ui.helpers
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.skye.hrms.data.viewmodels.AuthViewModel
-import com.skye.hrms.ui.screens.BoardingScreen
-import com.skye.hrms.ui.screens.HomeScreen
-import com.skye.hrms.ui.screens.LoginScreen
-import com.skye.hrms.ui.screens.OnBoardingScreen
-import com.skye.hrms.ui.screens.SignupScreen
-import com.skye.hrms.ui.screens.SplashScreen
+import androidx.navigation.navArgument
+import com.skye.hrms.data.viewmodels.common.AuthViewModel
+import com.skye.hrms.ui.screens.employee.ApplyLeaveScreen
+import com.skye.hrms.ui.screens.employee.AttendanceScreen
+import com.skye.hrms.ui.screens.employee.DashboardScreen
+import com.skye.hrms.ui.screens.common.LoginScreen
+import com.skye.hrms.ui.screens.employee.MyDocumentsScreen
+import com.skye.hrms.ui.screens.common.OnBoardingScreen
+import com.skye.hrms.ui.screens.employee.PayslipScreen
+import com.skye.hrms.ui.screens.common.SignupScreen
+import com.skye.hrms.ui.screens.common.SplashScreen
+import com.skye.hrms.ui.screens.common.VerificationScreen
+import com.skye.hrms.ui.screens.admin.AdminDashboardScreen
+import com.skye.hrms.ui.screens.admin.EmployeeDetailScreen
+import com.skye.hrms.ui.screens.admin.EmployeeListScreen
+import com.skye.hrms.ui.screens.admin.HolidayScreen
+import com.skye.hrms.ui.screens.admin.LeaveApprovalScreen
+import com.skye.hrms.ui.screens.admin.PayslipUploadScreen
+import com.skye.hrms.ui.screens.admin.PerformanceReviewScreen
 
+@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun Navigation(
     authViewModel: AuthViewModel
@@ -21,7 +37,7 @@ fun Navigation(
 
     NavHost(
         navController = navController,
-        startDestination = Screens.LoginScreen.route
+        startDestination = Screens.SplashScreen.route
     ) {
         composable(
             route = Screens.SplashScreen.route,
@@ -31,37 +47,7 @@ fun Navigation(
             popExitTransition = ScreenTransitions.fadeScalePopExit
         ) {
             SplashScreen(
-                onNavigateToBoarding = {
-                    navController.navigate(Screens.SplashScreen.route)
-                },
-                onNavigateToLogin = {
-
-                }
-            )
-        }
-
-        composable(
-            route = Screens.BoardingScreen.route,
-            enterTransition = ScreenTransitions.fadeScaleEnter,
-            exitTransition = ScreenTransitions.fadeScaleExit,
-            popEnterTransition = ScreenTransitions.fadeScalePopEnter,
-            popExitTransition = ScreenTransitions.fadeScalePopExit
-        ) {
-            BoardingScreen(
-                onNavigateToRegister = {
-                    navController.navigate(Screens.SignupScreen.route) {
-                        popUpTo(Screens.BoardingScreen.route) {
-                            inclusive = true
-                        }
-                    }
-                },
-                onNavigateToLogin = {
-                    navController.navigate(Screens.LoginScreen.route) {
-                        popUpTo(Screens.BoardingScreen.route) {
-                            inclusive = true
-                        }
-                    }
-                }
+                navController = navController
             )
         }
 
@@ -75,10 +61,18 @@ fun Navigation(
             LoginScreen(
                 authViewModel = authViewModel,
                 onNavigateToSignup = {
-                    navController.navigate(Screens.SignupScreen.route)
+                    navController.navigate(Screens.SignupScreen.route) {
+                        popUpTo(Screens.LoginScreen.route) {
+                            inclusive = true
+                        }
+                    }
                 },
                 onLoginSuccess = {
-                    navController.navigate(Screens.HomeScreen.route)
+                    navController.navigate(Screens.SplashScreen.route) {
+                        popUpTo(Screens.LoginScreen.route) {
+                            inclusive = true
+                        }
+                    }
                 }
             )
 
@@ -94,23 +88,21 @@ fun Navigation(
             SignupScreen(
                 authViewModel = authViewModel,
                 onNavigateToLogin = {
-                    navController.navigate(Screens.LoginScreen.route)
+                    navController.navigate(Screens.LoginScreen.route) {
+                        popUpTo(Screens.SignupScreen.route) {
+                            inclusive = true
+                        }
+                    }
                 },
                 onSignupSuccess = {
-                    navController.navigate(Screens.HomeScreen.route)
+                    navController.navigate(Screens.SplashScreen.route) {
+                        popUpTo(Screens.SignupScreen.route) {
+                            inclusive = true
+                        }
+                    }
                 }
             )
 
-        }
-
-        composable(
-            route = Screens.HomeScreen.route,
-            enterTransition = ScreenTransitions.fadeScaleEnter,
-            exitTransition = ScreenTransitions.fadeScaleExit,
-            popEnterTransition = ScreenTransitions.fadeScalePopEnter,
-            popExitTransition = ScreenTransitions.fadeScalePopExit
-        ) {
-            HomeScreen()
         }
 
         composable(
@@ -122,11 +114,252 @@ fun Navigation(
         ) {
             OnBoardingScreen(
                 onFormSubmitted = {
-                    navController.navigate(Screens.HomeScreen.route)
+                    navController.navigate(Screens.DashboardScreen.route) {
+                        popUpTo(Screens.OnBoardingScreen.route) {
+                            inclusive = true
+                        }
+                    }
                 }
             )
         }
 
+        composable(
+            route = Screens.VerificationScreen.route,
+            enterTransition = ScreenTransitions.fadeScaleEnter,
+            exitTransition = ScreenTransitions.fadeScaleExit,
+            popEnterTransition = ScreenTransitions.fadeScalePopEnter,
+            popExitTransition = ScreenTransitions.fadeScalePopExit
+        ) {
+            VerificationScreen(
+                authViewModel = authViewModel,
+                onVerified = {
+                    navController.navigate(Screens.OnBoardingScreen.route) {
+                        popUpTo(Screens.VerificationScreen.route) {
+                            inclusive = true
+                        }
+                    }
+                },
+                onBackToLogin = {
+                    navController.navigate(Screens.LoginScreen.route) {
+                        popUpTo(Screens.VerificationScreen.route) {
+                            inclusive = true
+                        }
+                    }
+                }
+            )
+        }
 
+        composable(
+            route = Screens.DashboardScreen.route,
+            enterTransition = ScreenTransitions.fadeScaleEnter,
+            exitTransition = ScreenTransitions.fadeScaleExit,
+            popEnterTransition = ScreenTransitions.fadeScalePopEnter,
+            popExitTransition = ScreenTransitions.fadeScalePopExit
+        ) {
+            DashboardScreen(
+                authViewModel = authViewModel,
+                onSignOut = {
+                    navController.navigate(Screens.SplashScreen.route) {
+                        popUpTo(Screens.DashboardScreen.route) {
+                            inclusive = true
+                        }
+                    }
+                },
+                onApplyLeaveClicked = {
+                    navController.navigate(Screens.ApplyLeaveScreen.route)
+                },
+                onAttendanceClicked = {
+                    navController.navigate(Screens.AttendanceScreen.route)
+                },
+                onPayslipClicked = {
+                    navController.navigate(Screens.PayslipScreen.route)
+                },
+                onMyDocumentsClicked = {
+                    navController.navigate(Screens.MyDocumentsScreen.route)
+                }
+            )
+        }
+
+        composable(
+            route = Screens.MyDocumentsScreen.route,
+            enterTransition = ScreenTransitions.fadeScaleEnter,
+            exitTransition = ScreenTransitions.fadeScaleExit,
+            popEnterTransition = ScreenTransitions.fadeScalePopEnter,
+            popExitTransition = ScreenTransitions.fadeScalePopExit
+        ) {
+            MyDocumentsScreen(
+                onBackClicked = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = Screens.PayslipScreen.route,
+            enterTransition = ScreenTransitions.fadeScaleEnter,
+            exitTransition = ScreenTransitions.fadeScaleExit,
+            popEnterTransition = ScreenTransitions.fadeScalePopEnter,
+            popExitTransition = ScreenTransitions.fadeScalePopExit
+        ) {
+            PayslipScreen(
+                onBackClicked = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = Screens.AttendanceScreen.route,
+            enterTransition = ScreenTransitions.fadeScaleEnter,
+            exitTransition = ScreenTransitions.fadeScaleExit,
+            popEnterTransition = ScreenTransitions.fadeScalePopEnter,
+            popExitTransition = ScreenTransitions.fadeScalePopExit
+        ) {
+            AttendanceScreen(
+                onBackClicked = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = Screens.ApplyLeaveScreen.route,
+            enterTransition = ScreenTransitions.fadeScaleEnter,
+            exitTransition = ScreenTransitions.fadeScaleExit,
+            popEnterTransition = ScreenTransitions.fadeScalePopEnter,
+            popExitTransition = ScreenTransitions.fadeScalePopExit
+        ) {
+            ApplyLeaveScreen(
+                onBackClicked = {
+                    navController.navigate(Screens.DashboardScreen.route) {
+                        popUpTo(Screens.ApplyLeaveScreen.route) {
+                            inclusive = true
+                        }
+                    }
+                }
+            )
+        }
+
+        composable(
+            route = Screens.AdminDashboardScreen.route,
+            enterTransition = ScreenTransitions.fadeScaleEnter,
+            exitTransition = ScreenTransitions.fadeScaleExit,
+            popEnterTransition = ScreenTransitions.fadeScalePopEnter,
+            popExitTransition = ScreenTransitions.fadeScalePopExit
+        ) {
+            AdminDashboardScreen(
+                navController = navController,
+                authViewModel = authViewModel,
+                onNavigateToEmployeeList = {
+                    navController.navigate(Screens.EmployeeListScreen.route)
+                },
+                onNavigateToLeaveApprovals = {
+                    navController.navigate(Screens.LeaveApprovalScreen.route)
+                },
+                onSignOut = {
+                    navController.navigate(Screens.SplashScreen.route) {
+                        popUpTo(Screens.DashboardScreen.route) {
+                            inclusive = true
+                        }
+                    }
+                },
+                onNavigateToPayslips = {
+                    navController.navigate(Screens.PayslipUploadScreen.route)
+                },
+                onNavigateToHolidays = {
+                    navController.navigate(Screens.ManageHolidaysScreen.route)
+                },
+                onNavigateToPerformanceReview = {
+                    navController.navigate(Screens.PerformanceReviewScreen.route)
+                }
+            )
+        }
+
+        composable(
+            route = Screens.LeaveApprovalScreen.route,
+            enterTransition = ScreenTransitions.fadeScaleEnter,
+            exitTransition = ScreenTransitions.fadeScaleExit,
+            popEnterTransition = ScreenTransitions.fadeScalePopEnter,
+            popExitTransition = ScreenTransitions.fadeScalePopExit
+        ) {
+            LeaveApprovalScreen(
+                onBackClicked = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = Screens.EmployeeListScreen.route,
+            enterTransition = ScreenTransitions.fadeScaleEnter,
+            exitTransition = ScreenTransitions.fadeScaleExit,
+            popEnterTransition = ScreenTransitions.fadeScalePopEnter,
+            popExitTransition = ScreenTransitions.fadeScalePopExit
+        ) {
+            EmployeeListScreen(
+                onBackClicked = {
+                    navController.popBackStack()
+                },
+                onEmployeeClicked = { userId ->
+                    navController.navigate(Screens.EmployeeDetailScreen.createRoute(userId))
+                }
+            )
+        }
+
+        composable(
+            route = Screens.EmployeeDetailScreen.route,
+            enterTransition = ScreenTransitions.fadeScaleEnter,
+            exitTransition = ScreenTransitions.fadeScaleExit,
+            popEnterTransition = ScreenTransitions.fadeScalePopEnter,
+            popExitTransition = ScreenTransitions.fadeScalePopExit,
+            arguments = listOf(navArgument("userId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            EmployeeDetailScreen(
+                userId = backStackEntry.arguments?.getString("userId") ?: "",
+                onBackClicked = { navController.popBackStack() }
+            )
+        }
+
+        composable(
+            route = Screens.PayslipUploadScreen.route,
+            enterTransition = ScreenTransitions.fadeScaleEnter,
+            exitTransition = ScreenTransitions.fadeScaleExit,
+            popEnterTransition = ScreenTransitions.fadeScalePopEnter,
+            popExitTransition = ScreenTransitions.fadeScalePopExit
+        ) {
+            PayslipUploadScreen(
+                onBackClicked = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = Screens.ManageHolidaysScreen.route,
+            enterTransition = ScreenTransitions.fadeScaleEnter,
+            exitTransition = ScreenTransitions.fadeScaleExit,
+            popEnterTransition = ScreenTransitions.fadeScalePopEnter,
+            popExitTransition = ScreenTransitions.fadeScalePopExit
+        ) {
+            HolidayScreen(
+                onBackClicked = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = Screens.PerformanceReviewScreen.route,
+            enterTransition = ScreenTransitions.fadeScaleEnter,
+            exitTransition = ScreenTransitions.fadeScaleExit,
+            popEnterTransition = ScreenTransitions.fadeScalePopEnter,
+            popExitTransition = ScreenTransitions.fadeScalePopExit
+        ) {
+            PerformanceReviewScreen(
+                onBackClicked = {
+                    navController.popBackStack()
+                }
+            )
+        }
     }
 }

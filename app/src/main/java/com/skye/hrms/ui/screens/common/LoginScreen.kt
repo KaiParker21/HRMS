@@ -1,5 +1,6 @@
-package com.skye.hrms.ui.screens
+package com.skye.hrms.ui.screens.common
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
@@ -9,7 +10,22 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
@@ -23,10 +39,25 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Lock
-import androidx.compose.material.icons.outlined.PersonOutline
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LoadingIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,26 +69,26 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import com.skye.hrms.data.viewmodels.AuthState
-import com.skye.hrms.data.viewmodels.AuthViewModel
+import com.skye.hrms.data.viewmodels.common.AuthState
+import com.skye.hrms.data.viewmodels.common.AuthViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun SignupScreen(
+fun LoginScreen(
     authViewModel: AuthViewModel,
-    onNavigateToLogin: () -> Unit,
-    onSignupSuccess: () -> Unit,
+    onNavigateToSignup: () -> Unit,
+    onLoginSuccess: () -> Unit,
 ) {
     val authState by authViewModel.authState.observeAsState()
-    val snackbarHostState = remember { SnackbarHostState() }
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
     val focusManager = LocalFocusManager.current
 
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
@@ -72,10 +103,10 @@ fun SignupScreen(
     LaunchedEffect(authState) {
         when (val state = authState) {
             is AuthState.Success -> {
-                onSignupSuccess()
+                onLoginSuccess()
             }
             is AuthState.Error -> {
-                snackbarHostState.showSnackbar(message = state.message)
+                errorMessage = state.message
                 authViewModel.resetAuthState()
             }
             else -> Unit
@@ -83,14 +114,14 @@ fun SignupScreen(
     }
 
     val isLoading = authState is AuthState.Loading
+    val isError = errorMessage != null
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) }
-    ) { paddingValues ->
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+    Scaffold {  paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .imePadding()
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(
@@ -116,7 +147,6 @@ fun SignupScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-
                 AnimatedVisibility(
                     visible = isVisible,
                     enter = fadeIn(animationSpec = tween(1000)) + slideInVertically(
@@ -131,25 +161,25 @@ fun SignupScreen(
                         Box(
                             modifier = Modifier
                                 .size(120.dp)
-                                .clip(RoundedCornerShape(50.dp, 10.dp, 30.dp, 30.dp))
+                                .clip(RoundedCornerShape(30.dp, 30.dp, 50.dp, 10.dp))
                                 .background(
                                     Brush.linearGradient(
                                         colors = listOf(
-                                            MaterialTheme.colorScheme.secondary,
-                                            MaterialTheme.colorScheme.primary
+                                            MaterialTheme.colorScheme.primary,
+                                            MaterialTheme.colorScheme.tertiary
                                         )
                                     )
                                 )
                         )
                         Spacer(modifier = Modifier.height(24.dp))
                         Text(
-                            text = "Create Account",
+                            text = "Welcome Back!",
                             style = MaterialTheme.typography.displaySmall,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Start your adventure with us.",
+                            text = "Log in to continue your journey.",
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center
@@ -170,16 +200,21 @@ fun SignupScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.bringIntoViewRequester(bringIntoViewRequester)
                     ) {
-
                         OutlinedTextField(
                             value = email,
-                            onValueChange = { email = it },
+                            onValueChange = {
+                                email = it
+                                errorMessage = null
+                            },
                             enabled = !isLoading,
+                            isError = isError,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .onFocusEvent { event ->
                                     if (event.isFocused) {
-                                        coroutineScope.launch { bringIntoViewRequester.bringIntoView() }
+                                        coroutineScope.launch {
+                                            bringIntoViewRequester.bringIntoView()
+                                        }
                                     }
                                 },
                             label = { Text("Email") },
@@ -201,13 +236,19 @@ fun SignupScreen(
 
                         OutlinedTextField(
                             value = password,
-                            onValueChange = { password = it },
+                            onValueChange = {
+                                password = it
+                                errorMessage = null
+                            },
                             enabled = !isLoading,
+                            isError = isError,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .onFocusEvent { event ->
                                     if (event.isFocused) {
-                                        coroutineScope.launch { bringIntoViewRequester.bringIntoView() }
+                                        coroutineScope.launch {
+                                            bringIntoViewRequester.bringIntoView()
+                                        }
                                     }
                                 },
                             label = { Text("Password") },
@@ -234,7 +275,7 @@ fun SignupScreen(
                             keyboardActions = KeyboardActions(
                                 onDone = {
                                     focusManager.clearFocus()
-                                    authViewModel.signUpWithEmailAndPassword(
+                                    authViewModel.signInWithEmailAndPassword(
                                         email = email.trim(),
                                         password = password
                                     )
@@ -243,11 +284,20 @@ fun SignupScreen(
                             singleLine = true
                         )
 
+                        AnimatedVisibility(visible = isError) {
+                            Text(
+                                text = errorMessage ?: "",
+                                color = MaterialTheme.colorScheme.error,
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.padding(top = 8.dp)
+                            )
+                        }
+
                         Spacer(modifier = Modifier.height(24.dp))
 
                         Button(
                             onClick = {
-                                authViewModel.signUpWithEmailAndPassword(
+                                authViewModel.signInWithEmailAndPassword(
                                     email = email.trim(),
                                     password = password
                                 )
@@ -264,19 +314,27 @@ fun SignupScreen(
                             )
                         ) {
                             if (isLoading) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(24.dp),
-                                    color = MaterialTheme.colorScheme.onPrimary
-                                )
+                                LoadingIndicator()
                             } else {
-                                Text(text = "Sign Up", style = MaterialTheme.typography.titleMedium)
+                                Text(text = "Login", style = MaterialTheme.typography.titleMedium)
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                                    contentDescription = "Sign Up Arrow"
+                                    contentDescription = "Login Arrow"
                                 )
                             }
                         }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Text(
+                            text = "Forgot Password?",
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.clickable { /* TODO: Handle forgot password */ },
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                textDecoration = TextDecoration.Underline
+                            )
+                        )
                     }
                 }
 
@@ -294,13 +352,13 @@ fun SignupScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            "Already have an account?",
+                            "Don't have an account?",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(modifier = Modifier.width(4.dp))
-                        TextButton(onClick = onNavigateToLogin, enabled = !isLoading) {
-                            Text("Log In", color = MaterialTheme.colorScheme.primary)
+                        TextButton(onClick = onNavigateToSignup, enabled = !isLoading) {
+                            Text("Sign Up", color = MaterialTheme.colorScheme.primary)
                         }
                     }
                 }
