@@ -58,37 +58,39 @@ com.company.hrms
 ├── auth/         # Authentication wrapper classes & session management
 └── utils/        # Extension functions, date formatters & utilities
 ```
-## 📸 Screenshots
+## 🚀 Screenshots
 
-### **Login & Authentication**
-![Login](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_195618_HRMS.jpg)
-![Login 2](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_195642_HRMS.jpg)
+Here are the screenshots showcasing the key features of the app:
 
-### **Dashboard**
-![Dashboard](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_195706_HRMS.jpg)
-![Dashboard 2](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_195713_HRMS.jpg)
-![Dashboard 3](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_195723_HRMS.jpg)
-![Dashboard 4](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_195728_HRMS.jpg)
+<div align="center">
 
-### **Profile / Employee**
-![Profile](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_195818_HRMS.jpg)
-![Profile 2](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_195829_HRMS.jpg)
+<img src="https://raw.githubusercontent.com/KaiParker21/HRMS/master/assets/screenshots/Screenshot_20251115_195618_HRMS.jpg" width="250"/>
+<img src="https://raw.githubusercontent.com/KaiParker21/HRMS/master/assets/screenshots/Screenshot_20251115_195642_HRMS.jpg" width="250"/>
+<img src="https://raw.githubusercontent.com/KaiParker21/HRMS/master/assets/screenshots/Screenshot_20251115_195706_HRMS.jpg" width="250"/> <br/>
 
-### **Attendance**
-![Attendance](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_195836_HRMS.jpg)
-![Attendance 2](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_195843_HRMS.jpg)
-![Attendance 3](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_195850_HRMS.jpg)
-![Attendance 4](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_195856_HRMS.jpg)
+<img src="https://raw.githubusercontent.com/KaiParker21/HRMS/master/assets/screenshots/Screenshot_20251115_195713_HRMS.jpg" width="250"/>
+<img src="https://raw.githubusercontent.com/KaiParker21/HRMS/master/assets/screenshots/Screenshot_20251115_195723_HRMS.jpg" width="250"/>
+<img src="https://raw.githubusercontent.com/KaiParker21/HRMS/master/assets/screenshots/Screenshot_20251115_195728_HRMS.jpg" width="250"/> <br/>
 
-### **Leave Management**
-![Leave](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_195904_HRMS.jpg)
-![Leave 2](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_195926_HRMS.jpg)
-![Leave 3](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_195949_HRMS.jpg)
+<img src="https://raw.githubusercontent.com/KaiParker21/HRMS/master/assets/screenshots/Screenshot_20251115_195818_HRMS.jpg" width="250"/>
+<img src="https://raw.githubusercontent.com/KaiParker21/HRMS/master/assets/screenshots/Screenshot_20251115_195829_HRMS.jpg" width="250"/>
+<img src="https://raw.githubusercontent.com/KaiParker21/HRMS/master/assets/screenshots/Screenshot_20251115_195836_HRMS.jpg" width="250"/> <br/>
 
-### **Admin / Other Screens**
-![Admin](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_200014_HRMS.jpg)
-![Admin 2](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_200023_HRMS.jpg)
-![Admin 3](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_200027_HRMS.jpg)
-![Admin 4](https://github.com/KaiParker21/HRMS/blob/master/assets/screenshots/Screenshot_20251115_200112_HRMS.jpg)
+<img src="https://raw.githubusercontent.com/KaiParker21/HRMS/master/assets/screenshots/Screenshot_20251115_195843_HRMS.jpg" width="250"/>
+<img src="https://raw.githubusercontent.com/KaiParker21/HRMS/master/assets/screenshots/Screenshot_20251115_195850_HRMS.jpg" width="250"/>
+<img src="https://raw.githubusercontent.com/KaiParker21/HRMS/master/assets/screenshots/Screenshot_20251115_195856_HRMS.jpg" width="250"/> <br/>
+
+<img src="https://raw.githubusercontent.com/KaiParker21/HRMS/master/assets/screenshots/Screenshot_20251115_195904_HRMS.jpg" width="250"/>
+<img src="https://raw.githubusercontent.com/KaiParker21/HRMS/master/assets/screenshots/Screenshot_20251115_195926_HRMS.jpg" width="250"/>
+<img src="https://raw.githubusercontent.com/KaiParker21/HRMS/master/assets/screenshots/Screenshot_20251115_195949_HRMS.jpg" width="250"/> <br/>
+
+<img src="https://raw.githubusercontent.com/KaiParker21/HRMS/master/assets/screenshots/Screenshot_20251115_200014_HRMS.jpg" width="250"/>
+<img src="https://raw.githubusercontent.com/KaiParker21/HRMS/master/assets/screenshots/Screenshot_20251115_200023_HRMS.jpg" width="250"/>
+<img src="https://raw.githubusercontent.com/KaiParker21/HRMS/master/assets/screenshots/Screenshot_20251115_200027_HRMS.jpg" width="250"/> <br/>
+
+<img src="https://raw.githubusercontent.com/KaiParker21/HRMS/master/assets/screenshots/Screenshot_20251115_200112_HRMS.jpg" width="250"/>
+
+</div>
+
 
 
